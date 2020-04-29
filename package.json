@@ -6,9 +6,10 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
+        "clean": "rm -rf dist && rm -rf node_modules",
         "dev": "nest start --watch --debug",
         "lint": "prettier --write 'src/**/*.ts' 'test/**/*.ts' && eslint '{src,apps,libs,test}/**/*.ts' --fix",
-        "prod": "rm -rf dist && tsc -p tsconfig.build.json && node dist/main",
+        "prod": "tsc -p tsconfig.build.json && node dist/main",
         "test": "jest"
     },
     "dependencies": {
