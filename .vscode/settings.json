@@ -1,3 +1,5 @@
 {
-    "prettier.configPath": ".prettierrc"
+    "prettier.configPath": ".prettierrc",
+    "html.format.endWithNewline": true,
+    "html.format.extraLiners": ""
 }
