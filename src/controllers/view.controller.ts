@@ -8,6 +8,6 @@ export class ViewController {
     @Get()
     @Render('index')
     index() {
-        return {title: 'quipple'}
+        return {}
     }
 }

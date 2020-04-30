@@ -5,6 +5,18 @@
         <title>Quipple</title>
     </head>
     <body>
-        <h1>{{title}}</h1>
+        <h1>Quipple</h1>
+        <form>
+            <label>
+                Screen Name:
+                <input name="screen-name" type="text" minlength="3" maxlength="20" spellcheck="false">
+            </label>
+            <label>
+                Game ID (if joining):
+                <input name="id-to-join" type="text" maxlength="5" spellcheck="false">
+            </label>
+            <button name="start" type="submit">Start New Game</button>
+            <button name="join" type="submit">Join Game</button>
+        </form>
     </body>
 </html>
