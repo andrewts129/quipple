@@ -1,4 +1,4 @@
-import { Length, IsAlphanumeric, IsAlpha, IsNotEmpty, IsLowercase } from 'class-validator';
+import { Length, IsAlphanumeric, IsAlpha, IsNotEmpty, IsUppercase } from 'class-validator';
 
 export class JoinGameDto {
     @IsAlphanumeric('en-US', { always: true })
@@ -6,7 +6,7 @@ export class JoinGameDto {
     screenName: string;
 
     @IsAlpha() // TODO doesn't work?
-    @IsLowercase()
+    @IsUppercase()
     @Length(5, 5, { groups: ['join'] })
     gameIdToJoin: string;
 

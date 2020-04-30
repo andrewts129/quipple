@@ -23,6 +23,9 @@ export class JoinGameValidationPipe implements PipeTransform {
         }
 
         const entityAsDto = plainToClass(JoinGameDto, entity, { groups });
+
+        entityAsDto.gameIdToJoin = entityAsDto.gameIdToJoin.toUpperCase();
+
         const errors = await validate(entityAsDto, { groups });
         if (errors.length > 0) {
             throw new HttpException(
