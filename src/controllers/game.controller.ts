@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UsePipes } from '@nestjs/common';
-import { JoinGameDto } from 'src/dto/JoinGameDto';
-import { JoinGameValidationPipe } from 'src/pipes/JoinGameValidationPipe';
+import { JoinGameDto } from '../dto/JoinGameDto';
+import { JoinGameValidationPipe } from '../pipes/JoinGameValidationPipe';
 
 @Controller()
 export class GameController {

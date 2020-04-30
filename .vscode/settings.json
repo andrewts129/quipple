@@ -1,4 +1,5 @@
 {
+    "typescript.preferences.importModuleSpecifier": "relative",
     "prettier.configPath": ".prettierrc",
     "html.format.endWithNewline": true,
     "html.format.extraLiners": ""
