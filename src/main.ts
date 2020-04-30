@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { NestExpressApplication } from '@nestjs/platform-express'
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { RootModule } from './root.module';
 import { join } from 'path';
 
@@ -11,5 +11,5 @@ const bootstrap = async () => {
     app.setViewEngine('hbs');
 
     await app.listen(process.env.PORT || 3000);
-}
+};
 bootstrap();
