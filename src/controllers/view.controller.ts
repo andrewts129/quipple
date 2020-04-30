@@ -1,4 +1,4 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Param } from '@nestjs/common';
 
 @Controller()
 export class ViewController {
@@ -6,5 +6,11 @@ export class ViewController {
     @Render('index')
     index() {
         return {};
+    }
+
+    @Get('/lobby/:id')
+    @Render('lobby')
+    lobby(@Param() params) {
+        return { gameId: params.id }
     }
 }
