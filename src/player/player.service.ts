@@ -1,4 +1,4 @@
-import { Player } from '../models/player.model';
+import { Player } from './player.model';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

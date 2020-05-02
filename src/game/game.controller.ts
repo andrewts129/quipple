@@ -9,12 +9,12 @@ import {
     Res,
     UseGuards
 } from '@nestjs/common';
-import { JoinGameDto } from '../dto/JoinGameDto';
-import { JoinGameValidationPipe } from '../pipes/JoinGameValidationPipe';
-import { GameService } from '../services/game.service';
-import { PlayerService } from '../services/player.service';
-import { Player } from '../models/player.model';
-import { StartGameDto } from '../dto/StartGameDto';
+import { JoinGameDto } from './dto/JoinGameDto';
+import { JoinGameValidationPipe } from './pipes/JoinGameValidationPipe';
+import { GameService } from './game.service';
+import { PlayerService } from '../player/player.service';
+import { Player } from '../player/player.model';
+import { StartGameDto } from './dto/StartGameDto';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
