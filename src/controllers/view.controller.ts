@@ -21,4 +21,15 @@ export class ViewController {
             throw new NotFoundException(`Game with ID ${params.id} not found`);
         }
     }
+
+    @Get('/game/:id')
+    @Render('game')
+    async game(@Param() params) {
+        const game = await this.gameService.findGame(params.id);
+        if (game) {
+            return { game };
+        } else {
+            throw new NotFoundException(`Game with ID ${params.id} not found`);
+        }
+    }
 }
