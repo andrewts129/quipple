@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Game } from '../models/game.model';
 import { PlayerService } from './player.service';
+import { Player } from '../models/player.model';
 
 const randomGameId = (): string => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -38,7 +39,7 @@ export class GameService {
         return null;
     }
 
-    async addPlayer(game: Game, screenName: string): Promise<void> {
-        game.players.push(await this.playerService.createPlayer(screenName));
+    async addPlayer(game: Game, player: Player): Promise<void> {
+        game.players.push(player);
     }
 }
