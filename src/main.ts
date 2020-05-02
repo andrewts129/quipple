@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { RootModule } from './root.module';

@@ -6,8 +6,8 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
     imports: [
         JwtModule.register({
-            secret: 'secretSauce',
-            signOptions: { expiresIn: '60s' }
+            secret: process.env.JWT_SECRET_KEY,
+            signOptions: { expiresIn: '10 minutes' }
         })
     ],
     providers: [AuthService, JwtStrategy],
