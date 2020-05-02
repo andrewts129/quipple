@@ -1,5 +1,6 @@
-import { Controller, Get, Render, Param, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Render, Param, NotFoundException, UseGuards } from '@nestjs/common';
 import { GameService } from '../services/game.service';
+import { JwtAuthGuard } from '../jwt.auth.guard';
 
 @Controller()
 export class ViewController {
@@ -13,6 +14,7 @@ export class ViewController {
 
     @Get('/lobby/:id')
     @Render('lobby')
+    @UseGuards(JwtAuthGuard)
     async lobby(@Param() params) {
         const game = await this.gameService.findGame(params.id);
         if (game) {
@@ -24,6 +26,7 @@ export class ViewController {
 
     @Get('/game/:id')
     @Render('game')
+    @UseGuards(JwtAuthGuard)
     async game(@Param() params) {
         const game = await this.gameService.findGame(params.id);
         if (game) {
