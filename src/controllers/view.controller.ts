@@ -1,6 +1,6 @@
 import { Controller, Get, Render, Param, NotFoundException, UseGuards } from '@nestjs/common';
 import { GameService } from '../services/game.service';
-import { JwtAuthGuard } from '../jwt.auth.guard';
+import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 
 @Controller()
 export class ViewController {

@@ -3,18 +3,11 @@ import { ViewController } from './controllers/view.controller';
 import { GameController } from './controllers/game.controller';
 import { GameService } from './services/game.service';
 import { PlayerService } from './services/player.service';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './services/auth.service';
-import { JwtStrategy } from './jwt.strategy';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-    imports: [
-        JwtModule.register({
-            secret: 'secretSauce',
-            signOptions: { expiresIn: '60s' }
-        })
-    ],
+    imports: [AuthModule],
     controllers: [ViewController, GameController],
-    providers: [GameService, PlayerService, AuthService, JwtStrategy]
+    providers: [GameService, PlayerService]
 })
 export class RootModule {}

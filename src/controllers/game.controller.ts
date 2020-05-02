@@ -16,8 +16,8 @@ import { PlayerService } from '../services/player.service';
 import { Player } from '../models/player.model';
 import { StartGameDto } from '../dto/StartGameDto';
 import { Response } from 'express';
-import { AuthService } from '../services/auth.service';
-import { JwtAuthGuard } from '../jwt.auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 
 @Controller()
 export class GameController {
