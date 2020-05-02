@@ -2,11 +2,17 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>{{gameId}} - Quipple</title>
+        <title>{{game.id}} - Quipple</title>
     </head>
     <body>
         <h1>Lobby</h1>
-        <h2>Game ID: {{gameId}}</h2>
+        <h2>Game ID: {{game.id}}</h2>
         <h3>Current Players</h3>
+        <ul>
+            <li>{{game.creator.screenName}}</li>
+            {{#each game.players}}
+                <li>{{this.screenName}}</li>
+            {{/each}}
+        </ul>
     </body>
 </html>

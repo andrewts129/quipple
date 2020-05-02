@@ -1,7 +1,10 @@
-import { Controller, Get, Render, Param } from '@nestjs/common';
+import { Controller, Get, Render, Param, NotFoundException } from '@nestjs/common';
+import { GameService } from '../services/game.service';
 
 @Controller()
 export class ViewController {
+    constructor(private gameService: GameService) {}
+
     @Get()
     @Render('index')
     index() {
@@ -10,7 +13,12 @@ export class ViewController {
 
     @Get('/lobby/:id')
     @Render('lobby')
-    lobby(@Param() params) {
-        return { gameId: params.id }
+    async lobby(@Param() params) {
+        const game = await this.gameService.findGame(params.id);
+        if (game) {
+            return { game };
+        } else {
+            throw new NotFoundException(`Game with ID ${params.id} not found`);
+        }
     }
 }
