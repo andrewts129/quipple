@@ -14,9 +14,11 @@
                 <li>{{this.screenName}}</li>
             {{/each}}
         </ul>
-        <form action="/start" method="POST">
-            <input name="gameId" type="hidden" value="{{game.id}}">
-            <button type="submit">Start Game</button>
-        </form>
+        {{#if isOwner}}
+            <form action="/start" method="POST">
+                <input name="gameId" type="hidden" value="{{game.id}}">
+                <button type="submit">Start Game</button>
+            </form>
+        {{/if}}
     </body>
 </html>
