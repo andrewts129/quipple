@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "",
     "author": "andrewts129@gmail.com",
-    "license": "MIT",
+    "license": "ISC",
     "scripts": {
         "dev": "concurrently \"(cd client && npm run dev);\" \"(cd server && npm run dev);\"",
         "format": "prettier --write 'server/src/**/*.ts' 'client/src/**/*.ts';",
