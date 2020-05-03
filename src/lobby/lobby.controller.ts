@@ -52,7 +52,7 @@ export class LobbyController {
         }
 
         res.cookie('jwt', await this.authService.getJwt(player));
-        res.redirect(303, `/lobby/${gameIdToRedirectTo}`);
+        res.redirect(303, `/${gameIdToRedirectTo}/lobby`);
     }
 
     @Post('start')
@@ -64,7 +64,7 @@ export class LobbyController {
             game.state = 'Running' as const;
             // TODO redirect other players too
             return {
-                url: `/game/${body.gameId}`
+                url: `/${body.gameId}/game`
             };
         } else {
             throw new NotFoundException(`Game with ID ${body.gameId} not found`);

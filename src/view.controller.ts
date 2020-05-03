@@ -19,7 +19,7 @@ export class ViewController {
         return {};
     }
 
-    @Get('/lobby/:gameId')
+    @Get('/:gameId/lobby')
     @Render('lobby')
     @UseGuards(JwtAuthGuard)
     async lobby(@Param('gameId') id: string, @Req() req: Request) {
@@ -32,7 +32,7 @@ export class ViewController {
         }
     }
 
-    @Get('/game/:gameId')
+    @Get('/:gameId/game')
     @Render('game')
     @UseGuards(JwtAuthGuard)
     async game(@Param('gameId') id: string) {
