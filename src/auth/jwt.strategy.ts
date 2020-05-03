@@ -5,6 +5,16 @@ import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { GameService } from '../game/game.service';
 
+const extractGameId = (request: Request): string | null => {
+    if (request.params.gameId) {
+        return request.params.gameId;
+    } else if (request.body.gameId) {
+        return request.body.gameId;
+    } else {
+        return null;
+    }
+};
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(private authService: AuthService, private gameService: GameService) {
@@ -18,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     async validate(request: Request, payload: any) {
         const player = this.authService.parsePayload(payload);
 
-        const gameId = request.params.id;
+        const gameId = extractGameId(request);
         const game = await this.gameService.findGame(gameId);
 
         if (await this.gameService.playerInGame(game, player)) {

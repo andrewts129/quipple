@@ -19,10 +19,10 @@ export class ViewController {
         return {};
     }
 
-    @Get('/lobby/:id')
+    @Get('/lobby/:gameId')
     @Render('lobby')
     @UseGuards(JwtAuthGuard)
-    async lobby(@Param('id') id: string, @Req() req: Request) {
+    async lobby(@Param('gameId') id: string, @Req() req: Request) {
         const game = await this.gameService.findGame(id);
         if (game) {
             const player = this.authService.extractPlayer(req);
@@ -32,10 +32,10 @@ export class ViewController {
         }
     }
 
-    @Get('/game/:id')
+    @Get('/game/:gameId')
     @Render('game')
     @UseGuards(JwtAuthGuard)
-    async game(@Param('id') id: string) {
+    async game(@Param('gameId') id: string) {
         const game = await this.gameService.findGame(id);
         if (game) {
             return { game };
