@@ -1,0 +1,16 @@
+{
+    "name": "quipple-client",
+    "version": "0.0.1",
+    "description": "",
+    "author": "andrewts129@gmail.com",
+    "scripts": {
+        "build": "gulp build",
+        "dev": "gulp dev"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "gulp": "^4.0.2",
+        "gulp-typescript": "^6.0.0-alpha.1",
+        "typescript": "^3.8.3"
+    }
+}

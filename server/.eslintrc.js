@@ -23,9 +23,6 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
         'prefer-arrow-callback': 'error',
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': [
-            'error',
-            { argsIgnorePattern: '^_.*$' }
-        ]
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_.*$' }]
     }
 };

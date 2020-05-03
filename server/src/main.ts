@@ -9,7 +9,11 @@ import * as cookieParser from 'cookie-parser';
 const bootstrap = async () => {
     const app = await NestFactory.create<NestExpressApplication>(RootModule);
 
-    app.useStaticAssets(join(__dirname, '..', 'public'));
+    app.useStaticAssets(join(__dirname, '..', '..', 'client', 'dist'), {
+        index: false,
+        redirect: false
+    });
+
     app.setBaseViewsDir(join(__dirname, '..', 'views'));
     app.setViewEngine('hbs');
 
