@@ -6,11 +6,19 @@
     "license": "MIT",
     "scripts": {
         "dev": "concurrently \"(cd client && npm run dev);\" \"(cd server && npm run dev);\"",
-        "lint": "(cd server && npm run lint);",
+        "format": "prettier --write 'server/src/**/*.ts' 'client/src/**/*.ts';",
+        "lint": "eslint 'server/src/**/*.ts' 'client/src/**/*.ts' --fix --color",
         "postinstall": "(cd client && npm install); (cd server && npm install);",
         "prod": "(cd client && npm run build); (cd server && npm run prod);"
     },
     "devDependencies": {
-        "concurrently": "^5.2.0"
+        "@typescript-eslint/eslint-plugin": "^2.30.0",
+        "@typescript-eslint/parser": "^2.30.0",
+        "concurrently": "^5.2.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-import": "^2.20.2",
+        "prettier": "^2.0.5",
+        "typescript": "^3.8.3"
     }
 }
