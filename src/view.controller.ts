@@ -22,25 +22,25 @@ export class ViewController {
     @Get('/:gameId/lobby')
     @Render('lobby')
     @UseGuards(JwtAuthGuard)
-    async lobby(@Param('gameId') id: string, @Req() req: Request) {
-        const game = await this.gameService.findGame(id);
+    async lobby(@Param('gameId') gameId: string, @Req() req: Request) {
+        const game = await this.gameService.findGame(gameId);
         if (game) {
             const player = this.authService.extractPlayer(req);
             return { game, isOwner: this.playerService.playersEqual(game.creator, player) };
         } else {
-            throw new NotFoundException(`Game with ID ${id} not found`);
+            throw new NotFoundException(`Game with ID ${gameId} not found`);
         }
     }
 
     @Get('/:gameId/game')
     @Render('game')
     @UseGuards(JwtAuthGuard)
-    async game(@Param('gameId') id: string) {
-        const game = await this.gameService.findGame(id);
+    async game(@Param('gameId') gameId: string) {
+        const game = await this.gameService.findGame(gameId);
         if (game) {
             return { game };
         } else {
-            throw new NotFoundException(`Game with ID ${id} not found`);
+            throw new NotFoundException(`Game with ID ${gameId} not found`);
         }
     }
 }

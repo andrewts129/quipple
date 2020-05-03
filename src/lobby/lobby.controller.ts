@@ -56,7 +56,7 @@ export class LobbyController {
     }
 
     @Post('start')
-    @Redirect('/game', 303)
+    @Redirect('/gameIdGoesHere/game', 303) // URL always overwritten
     @UseGuards(JwtAuthGuard)
     async start(@Body() body: StartGameDto) {
         const game = await this.gameService.findGame(body.gameId);
