@@ -22,7 +22,8 @@ export class GameService {
         const game = {
             id: randomGameId(),
             creator: await this.playerService.createPlayer(creatorScreenName),
-            players: []
+            players: [],
+            state: 'New' as const
         };
 
         this.games.add(game);

@@ -59,10 +59,15 @@ export class GameplayController {
     @Redirect('/game', 303)
     @UseGuards(JwtAuthGuard)
     async start(@Body() body: StartGameDto) {
-        // TODO start game
-        // TODO redirect other players too
-        return {
-            url: `/game/${body.gameId}`
-        };
+        const game = await this.gameService.findGame(body.gameId);
+        if (game) {
+            game.state = 'Running' as const;
+            // TODO redirect other players too
+            return {
+                url: `/game/${body.gameId}`
+            };
+        } else {
+            throw new NotFoundException(`Game with ID ${body.gameId} not found`);
+        }
     }
 }

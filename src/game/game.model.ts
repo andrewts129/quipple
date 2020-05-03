@@ -4,4 +4,5 @@ export class Game {
     id: string;
     creator: Player;
     players: Player[];
+    state: 'New' | 'Running';
 }
