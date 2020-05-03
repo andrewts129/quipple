@@ -42,4 +42,15 @@ export class GameService {
     async addPlayer(game: Game, player: Player): Promise<void> {
         game.players.push(player);
     }
+
+    async playerInGame(game: Game, playerToFind: Player): Promise<boolean> {
+        const allPlayers = [game.creator, ...game.players];
+        for (const playerInGame of allPlayers) {
+            if (this.playerService.playersEqual(playerToFind, playerInGame)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

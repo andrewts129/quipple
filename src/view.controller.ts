@@ -3,14 +3,15 @@ import { GameService } from './game/game.service';
 import { JwtAuthGuard } from './auth/jwt.auth.guard';
 import { Request } from 'express';
 import { AuthService } from './auth/auth.service';
-import { Player } from './player/player.model';
-
-const playersEqual = (a: Player, b: Player): boolean =>
-    a.id === b.id && a.screenName === b.screenName;
+import { PlayerService } from './player/player.service';
 
 @Controller()
 export class ViewController {
-    constructor(private gameService: GameService, private authService: AuthService) {}
+    constructor(
+        private gameService: GameService,
+        private playerService: PlayerService,
+        private authService: AuthService
+    ) {}
 
     @Get()
     @Render('index')
@@ -25,7 +26,7 @@ export class ViewController {
         const game = await this.gameService.findGame(id);
         if (game) {
             const player = this.authService.extractPlayer(req);
-            return { game, isOwner: playersEqual(game.creator, player) };
+            return { game, isOwner: this.playerService.playersEqual(game.creator, player) };
         } else {
             throw new NotFoundException(`Game with ID ${id} not found`);
         }

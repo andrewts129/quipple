@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { JoinGameDto } from './dto/JoinGameDto';
 import { JoinGameValidationPipe } from './pipes/JoinGameValidationPipe';
-import { GameService } from './game.service';
+import { GameService } from '../game/game.service';
 import { PlayerService } from '../player/player.service';
 import { Player } from '../player/player.model';
 import { StartGameDto } from './dto/StartGameDto';
@@ -20,7 +20,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 
 @Controller()
-export class GameController {
+export class GameplayController {
     constructor(
         private gameService: GameService,
         private playerService: PlayerService,

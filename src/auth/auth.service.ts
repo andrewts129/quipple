@@ -31,11 +31,15 @@ export class AuthService {
         }
     }
 
-    private decodeJwt(jwt: string): Player {
-        const payload = this.jwtService.verify(jwt);
+    parsePayload(payload: any): Player {
         return {
             id: payload.sub,
             screenName: payload.screenName
         };
+    }
+
+    private decodeJwt(jwt: string): Player {
+        const payload = this.jwtService.verify(jwt);
+        return this.parsePayload(payload);
     }
 }
