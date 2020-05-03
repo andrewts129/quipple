@@ -20,7 +20,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 
 @Controller()
-export class GameplayController {
+export class LobbyController {
     constructor(
         private gameService: GameService,
         private playerService: PlayerService,
