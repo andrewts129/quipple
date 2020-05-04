@@ -19,10 +19,11 @@ const handleReceivePlayerList = (response: PlayerListDto): void => {
 };
 
 const main = (): void => {
-    const socket = io();
+    const socket = io('/lobby');
 
     socket.on('connect', () => {
-        socket.emit('getPlayers', { gameId: thisGameId() }, handleReceivePlayerList);
+        socket.emit('joinRoom', { gameId: thisGameId() });
+        socket.on('newPlayerList', handleReceivePlayerList);
     });
 };
 

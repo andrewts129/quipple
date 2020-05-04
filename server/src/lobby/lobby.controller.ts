@@ -18,10 +18,12 @@ import { StartGameDto } from './dto/StartGameDto';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
+import { LobbyGateway } from './lobby.gateway';
 
 @Controller()
 export class LobbyController {
     constructor(
+        private lobbyGateway: LobbyGateway,
         private gameService: GameService,
         private playerService: PlayerService,
         private authService: AuthService
@@ -43,6 +45,8 @@ export class LobbyController {
                 player = await this.playerService.createPlayer(body.screenName);
                 await this.gameService.addPlayer(game, player);
                 gameIdToRedirectTo = body.gameIdToJoin;
+
+                await this.lobbyGateway.updateClientPlayerLists(game);
             } else {
                 throw new NotFoundException(`Game with ID ${body.gameIdToJoin} not found`);
             }
