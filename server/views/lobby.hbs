@@ -3,12 +3,14 @@
     <head>
         <meta charset="utf-8" />
         <title>{{game.id}} - Quipple</title>
+        <script defer src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+        <script defer src="/lobby.js"></script>
     </head>
     <body>
         <h1>Lobby</h1>
         <h2>Game ID: {{game.id}}</h2>
         <h3>Current Players</h3>
-        <ul>
+        <ul id="playerList">
             <li>{{game.creator.screenName}}</li>
             {{#each game.players}}
                 <li>{{this.screenName}}</li>

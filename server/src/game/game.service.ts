@@ -44,9 +44,12 @@ export class GameService {
         game.players.push(player);
     }
 
+    async allPlayers(game: Game): Promise<Player[]> {
+        return [game.creator, ...game.players];
+    }
+
     async playerInGame(game: Game, playerToFind: Player): Promise<boolean> {
-        const allPlayers = [game.creator, ...game.players];
-        for (const playerInGame of allPlayers) {
+        for (const playerInGame of await this.allPlayers(game)) {
             if (this.playerService.playersEqual(playerToFind, playerInGame)) {
                 return true;
             }
