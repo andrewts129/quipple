@@ -12,8 +12,4 @@ export class PlayerService {
             screenName
         };
     }
-
-    playersEqual(a: Player, b: Player): boolean {
-        return a.id === b.id && a.screenName === b.screenName;
-    }
 }

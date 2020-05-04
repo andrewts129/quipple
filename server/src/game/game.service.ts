@@ -4,11 +4,10 @@ import { PlayerService } from '../player/player.service';
 import { Player } from '../player/player.model';
 
 const randomGameId = (): string => {
+    const randomChar = (s: string): string => s[Math.floor(Math.random() * s.length)];
+
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const fiveRandomLetters = Array.from(
-        { length: 5 },
-        () => letters[Math.floor(Math.random() * letters.length)]
-    );
+    const fiveRandomLetters = Array.from({ length: 5 }, () => randomChar(letters));
     return fiveRandomLetters.join('');
 };
 
@@ -16,7 +15,7 @@ const randomGameId = (): string => {
 export class GameService {
     constructor(private playerService: PlayerService) {}
 
-    private games: Set<Game> = new Set();
+    private games: Map<string, Game> = new Map();
 
     async createGame(creatorScreenName: string): Promise<Game> {
         const game = {
@@ -26,18 +25,12 @@ export class GameService {
             state: 'New' as const
         };
 
-        this.games.add(game);
+        this.games.set(game.id, game);
         return game;
     }
 
     async findGame(id: string): Promise<Game | null> {
-        for (const game of this.games) {
-            if (id === game.id) {
-                return game;
-            }
-        }
-
-        return null;
+        return this.games.get(id);
     }
 
     async addPlayer(game: Game, player: Player): Promise<void> {
@@ -45,9 +38,7 @@ export class GameService {
     }
 
     async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
-        game.players = game.players.filter(
-            (player) => !this.playerService.playersEqual(playerToRemove, player)
-        );
+        game.players = game.players.filter((player) => player.id !== playerToRemove.id);
     }
 
     async allPlayers(game: Game): Promise<Player[]> {
@@ -55,12 +46,8 @@ export class GameService {
     }
 
     async playerInGame(game: Game, playerToFind: Player): Promise<boolean> {
-        for (const playerInGame of await this.allPlayers(game)) {
-            if (this.playerService.playersEqual(playerToFind, playerInGame)) {
-                return true;
-            }
-        }
-
-        return false;
+        const allPlayers = await this.allPlayers(game);
+        const playerIds = allPlayers.map((player) => player.id);
+        return playerIds.includes(playerToFind.id);
     }
 }
