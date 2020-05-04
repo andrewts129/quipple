@@ -10,7 +10,7 @@
         <h1>Lobby</h1>
         <h2>Game ID: {{game.id}}</h2>
         <h3>Current Players</h3>
-        <ul id="playerList">
+        <ul id="playerList" data-this-player-id="{{player.id}}" data-this-player-name="{{player.screenName}}">
             <li>{{game.creator.screenName}}</li>
             {{#each game.players}}
                 <li>{{this.screenName}}</li>

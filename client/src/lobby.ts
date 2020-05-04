@@ -3,6 +3,14 @@ import { PlayerListDto } from './dto/PlayerListDto';
 
 const thisGameId = (): string => window.location.pathname.split('/')[1];
 
+const thisPlayer = (): Player => {
+    const playerList = document.getElementById('playerList');
+    return {
+        id: parseInt(playerList.dataset.thisPlayerId),
+        screenName: playerList.dataset.thisPlayerName
+    };
+};
+
 const handleReceivePlayerList = (response: PlayerListDto): void => {
     const playerList = document.getElementById('playerList');
 
@@ -19,10 +27,11 @@ const handleReceivePlayerList = (response: PlayerListDto): void => {
 };
 
 const main = (): void => {
-    const socket = io('/lobby');
+    const player = thisPlayer();
 
+    const socket = io('/lobby');
     socket.on('connect', () => {
-        socket.emit('joinRoom', { gameId: thisGameId() });
+        socket.emit('register', { gameId: thisGameId(), player });
         socket.on('newPlayerList', handleReceivePlayerList);
     });
 };

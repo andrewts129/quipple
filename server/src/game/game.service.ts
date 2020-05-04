@@ -44,6 +44,12 @@ export class GameService {
         game.players.push(player);
     }
 
+    async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
+        game.players = game.players.filter(
+            (player) => !this.playerService.playersEqual(playerToRemove, player)
+        );
+    }
+
     async allPlayers(game: Game): Promise<Player[]> {
         return [game.creator, ...game.players];
     }
