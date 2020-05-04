@@ -11,7 +11,9 @@ import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/PlayerListDto';
 import { Player } from '../player/player.model';
 import { NotFoundException } from '@nestjs/common';
+import { StartGameDto } from './dto/StartGameDto';
 
+// TODO validation & auth
 @WebSocketGateway({ namespace: 'lobby' })
 export class LobbyGateway implements OnGatewayDisconnect {
     constructor(private gameService: GameService) {}
@@ -30,6 +32,20 @@ export class LobbyGateway implements OnGatewayDisconnect {
             this.clientPlayerGameMapping.set(client, [game, request.player]);
         } else {
             throw new NotFoundException(`Game with ID ${request.gameId} not found`);
+        }
+    }
+
+    @SubscribeMessage('start')
+    async handleStart(client: Socket): Promise<void> {
+        // TODO make sure only owner can start
+        const [game, player] = this.clientPlayerGameMapping.get(client);
+        if (game && player) {
+            game.state = 'Running' as const;
+            this.server.to(game.id).emit('start', {
+                url: `/${game.id}/game`
+            } as StartGameDto);
+        } else {
+            throw new NotFoundException(`Unknown user`);
         }
     }
 

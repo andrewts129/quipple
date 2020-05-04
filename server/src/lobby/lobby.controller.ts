@@ -3,21 +3,17 @@ import {
     Post,
     Body,
     UsePipes,
-    Redirect,
     NotFoundException,
     BadRequestException,
-    Res,
-    UseGuards
+    Res
 } from '@nestjs/common';
 import { JoinGameDto } from './dto/JoinGameDto';
 import { JoinGameValidationPipe } from './pipes/JoinGameValidationPipe';
 import { GameService } from '../game/game.service';
 import { PlayerService } from '../player/player.service';
 import { Player } from '../player/player.model';
-import { StartGameDto } from './dto/StartGameDto';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
-import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import { LobbyGateway } from './lobby.gateway';
 
 @Controller()
@@ -57,21 +53,5 @@ export class LobbyController {
 
         res.cookie('jwt', await this.authService.getJwt(player));
         res.redirect(303, `/${gameIdToRedirectTo}/lobby`);
-    }
-
-    @Post('start')
-    @Redirect('/gameIdGoesHere/game', 303) // URL always overwritten
-    @UseGuards(JwtAuthGuard)
-    async start(@Body() body: StartGameDto) {
-        const game = await this.gameService.findGame(body.gameId);
-        if (game) {
-            game.state = 'Running' as const;
-            // TODO redirect other players too
-            return {
-                url: `/${body.gameId}/game`
-            };
-        } else {
-            throw new NotFoundException(`Game with ID ${body.gameId} not found`);
-        }
     }
 }

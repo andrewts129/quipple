@@ -1,5 +1,7 @@
 import { Player } from './model/player';
 import { PlayerListDto } from './dto/PlayerListDto';
+import { RegisterDto } from './dto/RegisterDto';
+import { StartGameDto } from './dto/StartGameDto';
 
 const thisGameId = (): string => window.location.pathname.split('/')[1];
 
@@ -11,7 +13,7 @@ const thisPlayer = (): Player => {
     };
 };
 
-const handleReceivePlayerList = (response: PlayerListDto): void => {
+const handleReceivePlayerList = (data: PlayerListDto): void => {
     const playerList = document.getElementById('playerList');
 
     // Remove all child nodes
@@ -19,11 +21,19 @@ const handleReceivePlayerList = (response: PlayerListDto): void => {
         playerList.removeChild(playerList.lastChild);
     }
 
-    response.players.forEach((player: Player) => {
+    data.players.forEach((player: Player) => {
         const listElement = document.createElement('li');
         listElement.innerText = player.screenName;
         playerList.appendChild(listElement);
     });
+};
+
+const handleStartGameFromServer = (data: StartGameDto): void => {
+    document.location.href = data.url;
+};
+
+const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {
+    socket.emit('start');
 };
 
 const main = (): void => {
@@ -31,8 +41,16 @@ const main = (): void => {
 
     const socket = io('/lobby');
     socket.on('connect', () => {
-        socket.emit('register', { gameId: thisGameId(), player });
+        socket.emit('register', { gameId: thisGameId(), player } as RegisterDto);
+
         socket.on('newPlayerList', handleReceivePlayerList);
+        socket.on('start', handleStartGameFromServer);
+
+        // This button is only present for the owner
+        const startGameButton = document.getElementById('startGameButton');
+        if (startGameButton) {
+            startGameButton.addEventListener('click', () => handleStartGameButtonClick(socket));
+        }
     });
 };
 

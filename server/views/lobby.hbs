@@ -17,10 +17,7 @@
             {{/each}}
         </ul>
         {{#if isOwner}}
-            <form action="/start" method="POST">
-                <input name="gameId" type="hidden" value="{{game.id}}">
-                <button type="submit">Start Game</button>
-            </form>
+            <button id="startGameButton" type="button">Start Game</button>
         {{/if}}
     </body>
 </html>
