@@ -34,7 +34,7 @@ export class LobbyController {
         if (body.start) {
             const newGame = await this.gameService.createGame(body.screenName);
             gameIdToRedirectTo = newGame.id;
-            player = newGame.creator;
+            player = newGame.owner;
         } else if (body.join) {
             const game = await this.gameService.findGame(body.gameIdToJoin);
             if (game) {

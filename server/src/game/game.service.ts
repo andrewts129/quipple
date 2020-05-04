@@ -20,7 +20,7 @@ export class GameService {
     async createGame(creatorScreenName: string): Promise<Game> {
         const game = {
             id: randomGameId(),
-            creator: await this.playerService.createPlayer(creatorScreenName),
+            owner: await this.playerService.createPlayer(creatorScreenName),
             players: [],
             state: 'New' as const
         };
@@ -42,7 +42,7 @@ export class GameService {
     }
 
     async allPlayers(game: Game): Promise<Player[]> {
-        return [game.creator, ...game.players];
+        return [game.owner, ...game.players];
     }
 
     async playerInGame(game: Game, playerToFind: Player): Promise<boolean> {
