@@ -1,6 +1,9 @@
+import { Player } from './model/player';
+import { PlayerListDto } from './dto/PlayerListDto';
+
 const thisGameId = (): string => window.location.pathname.split('/')[1];
 
-const handleReceivePlayerList = (response: any): void => {
+const handleReceivePlayerList = (response: PlayerListDto): void => {
     const playerList = document.getElementById('playerList');
 
     // Remove all child nodes
@@ -8,7 +11,7 @@ const handleReceivePlayerList = (response: any): void => {
         playerList.removeChild(playerList.lastChild);
     }
 
-    response.players.forEach((player: any) => {
+    response.players.forEach((player: Player) => {
         const listElement = document.createElement('li');
         listElement.innerText = player.screenName;
         playerList.appendChild(listElement);

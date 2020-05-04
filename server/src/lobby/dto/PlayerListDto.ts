@@ -1,5 +1,5 @@
 import { Player } from '../../player/player.model';
 
-export class SendPlayersDto {
+export class PlayerListDto {
     players: Player[];
 }

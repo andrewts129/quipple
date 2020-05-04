@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { GetPlayersDto } from './dto/GetPlayersDto';
-import { SendPlayersDto } from './dto/SendPlayersDto';
+import { PlayerListDto } from './dto/PlayerListDto';
 import { GameService } from '../game/game.service';
 
 @WebSocketGateway()
@@ -17,7 +17,7 @@ export class LobbyGateway {
     server: Server;
 
     @SubscribeMessage('getPlayers')
-    async getPlayers(@MessageBody() request: GetPlayersDto): Promise<SendPlayersDto> {
+    async getPlayers(@MessageBody() request: GetPlayersDto): Promise<PlayerListDto> {
         const game = await this.gameService.findGame(request.gameId);
         return {
             players: await this.gameService.allPlayers(game)
