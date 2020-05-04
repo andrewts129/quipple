@@ -52,7 +52,9 @@ export class LobbyGateway implements OnGatewayDisconnect {
     async handleDisconnect(client: Socket): Promise<void> {
         // TODO deal with owner disconnect
         const [game, player] = this.clientPlayerGameMapping.get(client);
-        if (game && player) {
+
+        // Don't remove players when they left the page because they navigated to the game view
+        if (game && player && game.state === 'New') {
             await this.gameService.removePlayer(game, player);
             await this.updateClientPlayerLists(game);
         }
