@@ -6,12 +6,14 @@ module.exports = {
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
         'prettier',
-        'prettier/@typescript-eslint',
+        'prettier/@typescript-eslint'
     ],
     root: true,
     rules: {
+        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
         'prefer-arrow-callback': 'error',
         'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_.*$' }],
-    },
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_.*$' }]
+    }
 };
