@@ -1,6 +1,6 @@
 import { Player } from './model/player';
-import { PlayerListDto } from './dto/PlayerListDto';
-import { RegisterDto } from './dto/RegisterDto';
+import { PlayerListDto } from './dto/incoming/PlayerListDto';
+import { RegisterDto } from './dto/outgoing/RegisterDto';
 
 const thisGameId = (): string => window.location.pathname.split('/')[2];
 

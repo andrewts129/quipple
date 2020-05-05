@@ -6,10 +6,10 @@ import {
     WsException
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RegisterDto } from './dto/RegisterDto';
+import { RegisterDto } from './dto/incoming/RegisterDto';
 import { GameService } from '../game/game.service';
 import { Game } from '../game/game.model';
-import { PlayerListDto } from './dto/PlayerListDto';
+import { PlayerListDto } from './dto/outgoing/PlayerListDto';
 import { Player } from '../player/player.model';
 import { AuthService } from '../auth/auth.service';
 
