@@ -10,7 +10,6 @@ import { RegisterDto } from './dto/incoming/RegisterDto';
 import { GameService } from '../game/game.service';
 import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/outgoing/PlayerListDto';
-import { Player } from '../player/player.model';
 import { AuthService } from '../auth/auth.service';
 
 // TODO validation & auth
@@ -21,28 +20,29 @@ export class GameplayGateway implements OnGatewayDisconnect {
     @WebSocketServer()
     private server: Server;
 
-    private clientPlayerGameMapping: Map<Socket, [Game, Player]> = new Map();
+    private registrations: Map<Socket, [Game, string]> = new Map();
 
     @SubscribeMessage('register')
-    async handleRegister(client: Socket, request: RegisterDto): Promise<void> {
-        const game = await this.gameService.findGame(request.gameId);
-        const player = this.authService.decodeJwt(request.jwt);
+    async handleRegister(client: Socket, data: RegisterDto): Promise<void> {
+        const game = await this.gameService.findGame(data.gameId);
+        const player = this.authService.decodeJwt(data.jwt);
         if (game && player) {
             if (this.gameService.playerInGame(game, player)) {
                 await this.updateClientPlayerLists(game);
                 client.join(game.id);
-                this.clientPlayerGameMapping.set(client, [game, player]);
+                this.registrations.set(client, [game, data.jwt]);
             } else {
                 throw new WsException('Unauthorized');
             }
         } else {
-            throw new WsException(`Game with ID ${request.gameId} not found`);
+            throw new WsException(`Game with ID ${data.gameId} not found`);
         }
     }
 
     @SubscribeMessage('start')
     async handleStart(client: Socket): Promise<void> {
-        const [game, player] = this.clientPlayerGameMapping.get(client);
+        const [game, jwt] = this.registrations.get(client);
+        const player = this.authService.decodeJwt(jwt);
         if (game && player) {
             if (player.id === game.owner.id) {
                 game.state = 'question' as const;
@@ -56,7 +56,8 @@ export class GameplayGateway implements OnGatewayDisconnect {
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        const [game, player] = this.clientPlayerGameMapping.get(client);
+        const [game, jwt] = this.registrations.get(client);
+        const player = this.authService.decodeJwt(jwt);
         if (game && player) {
             await this.gameService.removePlayer(game, player);
             await this.updateClientPlayerLists(game);
