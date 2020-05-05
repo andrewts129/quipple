@@ -2,7 +2,8 @@ import {
     SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
-    OnGatewayDisconnect
+    OnGatewayDisconnect,
+    WsException
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { RegisterDto } from './dto/RegisterDto';
@@ -10,7 +11,6 @@ import { GameService } from '../game/game.service';
 import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/PlayerListDto';
 import { Player } from '../player/player.model';
-import { NotFoundException } from '@nestjs/common';
 
 // TODO validation & auth
 @WebSocketGateway({ namespace: 'lobby' })
@@ -30,19 +30,22 @@ export class GameplayGateway implements OnGatewayDisconnect {
             client.join(game.id);
             this.clientPlayerGameMapping.set(client, [game, request.player]);
         } else {
-            throw new NotFoundException(`Game with ID ${request.gameId} not found`);
+            throw new WsException(`Game with ID ${request.gameId} not found`);
         }
     }
 
     @SubscribeMessage('start')
     async handleStart(client: Socket): Promise<void> {
-        // TODO make sure only owner can start
         const [game, player] = this.clientPlayerGameMapping.get(client);
         if (game && player) {
-            game.state = 'Running' as const;
-            this.server.to(game.id).emit('start');
+            if (player.id === game.owner.id) {
+                game.state = 'Running' as const;
+                this.server.to(game.id).emit('start');
+            } else {
+                throw new WsException('Unauthorized');
+            }
         } else {
-            throw new NotFoundException(`Unknown user`);
+            throw new WsException('Not found');
         }
     }
 
