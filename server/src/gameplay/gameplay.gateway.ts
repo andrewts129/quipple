@@ -11,11 +11,12 @@ import { GameService } from '../game/game.service';
 import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/PlayerListDto';
 import { Player } from '../player/player.model';
+import { AuthService } from '../auth/auth.service';
 
 // TODO validation & auth
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway implements OnGatewayDisconnect {
-    constructor(private gameService: GameService) {}
+    constructor(private gameService: GameService, private authService: AuthService) {}
 
     @WebSocketServer()
     private server: Server;
@@ -25,10 +26,15 @@ export class GameplayGateway implements OnGatewayDisconnect {
     @SubscribeMessage('register')
     async handleRegister(client: Socket, request: RegisterDto): Promise<void> {
         const game = await this.gameService.findGame(request.gameId);
-        if (game) {
-            await this.updateClientPlayerLists(game);
-            client.join(game.id);
-            this.clientPlayerGameMapping.set(client, [game, request.player]);
+        const player = this.authService.decodeJwt(request.jwt);
+        if (game && player) {
+            if (this.gameService.playerInGame(game, player)) {
+                await this.updateClientPlayerLists(game);
+                client.join(game.id);
+                this.clientPlayerGameMapping.set(client, [game, player]);
+            } else {
+                throw new WsException('Unauthorized');
+            }
         } else {
             throw new WsException(`Game with ID ${request.gameId} not found`);
         }

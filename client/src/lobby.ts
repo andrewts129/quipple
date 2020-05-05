@@ -12,6 +12,16 @@ const thisPlayer = (): Player => {
     };
 };
 
+const thisPlayerJwt = (): string => {
+    const allCookies = document.cookie;
+    const jwtCookie = allCookies.split(';').find((s) => s.startsWith('jwt'));
+    if (jwtCookie) {
+        return jwtCookie.replace('jwt=', '');
+    } else {
+        alert('Authentication token not found');
+    }
+};
+
 const handleReceivePlayerList = (data: PlayerListDto): void => {
     const playerList = document.getElementById('playerList');
 
@@ -49,11 +59,9 @@ const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {
 };
 
 const main = (): void => {
-    const player = thisPlayer();
-
     const socket = io('/gameplay');
     socket.on('connect', () => {
-        socket.emit('register', { gameId: thisGameId(), player } as RegisterDto);
+        socket.emit('register', { gameId: thisGameId(), jwt: thisPlayerJwt() } as RegisterDto);
 
         socket.on('newPlayerList', handleReceivePlayerList);
         socket.on('start', handleStartGameFromServer);

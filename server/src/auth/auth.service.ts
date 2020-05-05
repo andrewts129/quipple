@@ -38,7 +38,7 @@ export class AuthService {
         };
     }
 
-    private decodeJwt(jwt: string): Player {
+    decodeJwt(jwt: string): Player {
         const payload = this.jwtService.verify(jwt);
         return this.parsePayload(payload);
     }
