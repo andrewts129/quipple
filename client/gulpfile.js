@@ -1,4 +1,5 @@
-const { dest, watch } = require('gulp');
+const { src, dest, watch, parallel } = require('gulp');
+const rename = require('gulp-rename');
 const ts = require('gulp-typescript');
 const tsProject = ts.createProject('tsconfig.json');
 
@@ -10,6 +11,16 @@ const compileTypescriptLive = () => {
     watch('src/*.ts', { ignoreInitial: false }, compileTypescript);
 };
 
-exports.build = compileTypescript;
-exports.dev = compileTypescriptLive;
+const copyStatic = () => {
+    return src('public/**/*', { nodir: true })
+        .pipe(rename({ dirname: '' }))
+        .pipe(dest('dist'));
+};
+
+const copyStaticLive = () => {
+    watch('public/**/*', { ignoreInitial: false }, copyStatic);
+};
+
+exports.build = parallel(compileTypescript, copyStatic);
+exports.dev = parallel(compileTypescriptLive, copyStaticLive);
 exports.default = exports.build;
