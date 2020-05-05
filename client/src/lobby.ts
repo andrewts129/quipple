@@ -2,7 +2,7 @@ import { Player } from './model/player';
 import { PlayerListDto } from './dto/PlayerListDto';
 import { RegisterDto } from './dto/RegisterDto';
 
-const thisGameId = (): string => window.location.pathname.split('/')[1];
+const thisGameId = (): string => window.location.pathname.split('/')[2];
 
 const thisPlayer = (): Player => {
     const playerList = document.getElementById('playerList');

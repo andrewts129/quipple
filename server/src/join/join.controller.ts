@@ -52,6 +52,6 @@ export class JoinController {
         }
 
         res.cookie('jwt', await this.authService.getJwt(player));
-        res.redirect(303, `/${gameIdToRedirectTo}`);
+        res.redirect(303, `/g/${gameIdToRedirectTo}`);
     }
 }

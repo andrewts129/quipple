@@ -14,7 +14,7 @@ export class ViewController {
         return {};
     }
 
-    @Get('/:gameId')
+    @Get('/g/:gameId')
     @Render('game')
     @UseGuards(JwtAuthGuard)
     async game(@Param('gameId') gameId: string, @Req() req: Request) {
