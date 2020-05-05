@@ -31,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         const gameId = extractGameId(request);
         const game = await this.gameService.findGame(gameId);
 
-        if (await this.gameService.playerInGame(game, player)) {
+        if (game && (await this.gameService.playerInGame(game, player))) {
             return player;
         } else {
             throw new UnauthorizedException();
