@@ -38,7 +38,11 @@ export class GameService {
     }
 
     async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
-        game.players = game.players.filter((player) => player.id !== playerToRemove.id);
+        if (playerToRemove.id === game.owner.id) {
+            game.owner = game.players.shift();
+        } else {
+            game.players = game.players.filter((player) => player.id !== playerToRemove.id);
+        }
     }
 
     async allPlayers(game: Game): Promise<Player[]> {

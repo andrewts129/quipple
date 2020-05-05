@@ -21,11 +21,16 @@ const handleReceivePlayerList = (data: PlayerListDto): void => {
         playerList.removeChild(playerList.lastChild);
     }
 
-    data.players.forEach((player: Player) => {
+    [data.owner, ...data.players].forEach((player: Player) => {
         const listElement = document.createElement('li');
         listElement.innerText = player.screenName;
         playerList.appendChild(listElement);
     });
+
+    if (data.owner.id === thisPlayer().id) {
+        const startGameButton = document.getElementById('startGameButton');
+        startGameButton.style.display = 'block';
+    }
 };
 
 const handleStartGameFromServer = (data: StartGameDto): void => {

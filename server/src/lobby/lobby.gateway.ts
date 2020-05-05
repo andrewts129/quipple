@@ -50,7 +50,6 @@ export class LobbyGateway implements OnGatewayDisconnect {
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        // TODO deal with owner disconnect
         const [game, player] = this.clientPlayerGameMapping.get(client);
 
         // Don't remove players when they left the page because they navigated to the game view
@@ -62,7 +61,8 @@ export class LobbyGateway implements OnGatewayDisconnect {
 
     async updateClientPlayerLists(game: Game): Promise<void> {
         this.server.to(game.id).emit('newPlayerList', {
-            players: await this.gameService.allPlayers(game)
+            owner: game.owner,
+            players: game.players
         } as PlayerListDto);
     }
 }

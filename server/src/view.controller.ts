@@ -21,7 +21,8 @@ export class ViewController {
         const game = await this.gameService.findGame(gameId);
         if (game) {
             const player = this.authService.extractPlayer(req);
-            return { game, player, isOwner: player.id === game.owner.id };
+            const startButtonDisplay = player.id === game.owner.id ? 'block' : 'none';
+            return { game, player, startButtonDisplay };
         } else {
             throw new NotFoundException(`Game with ID ${gameId} not found`);
         }

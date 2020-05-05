@@ -11,13 +11,11 @@
         <h2>Game ID: {{game.id}}</h2>
         <h3>Current Players</h3>
         <ul id="playerList" data-this-player-id="{{player.id}}" data-this-player-name="{{player.screenName}}">
-            <li>{{game.creator.screenName}}</li>
+            <li>{{game.owner.screenName}}</li>
             {{#each game.players}}
                 <li>{{this.screenName}}</li>
             {{/each}}
         </ul>
-        {{#if isOwner}}
-            <button id="startGameButton" type="button">Start Game</button>
-        {{/if}}
+        <button id="startGameButton" type="button" style="display: {{startButtonDisplay}};">Start Game</button>
     </body>
 </html>
