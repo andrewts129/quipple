@@ -3,16 +3,19 @@
     <head>
         <meta charset="utf-8" />
         <title>{{game.id}} - Quipple</title>
+        <script defer src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+        <script defer src="/lobby.js"></script>
     </head>
     <body>
-        <h1>Game ID: {{game.id}}</h2>
-            <h3>Current Players</h3>
-            <ul>
-                <li>{{game.creator.screenName}}</li>
-                {{#each game.players}}
-                    <li>{{this.screenName}}</li>
-                {{/each}}
-            </ul>
-            <p>TODO content</p>
+        <h1>Lobby</h1>
+        <h2>Game ID: {{game.id}}</h2>
+        <h3>Current Players</h3>
+        <ul id="playerList" data-this-player-id="{{player.id}}" data-this-player-name="{{player.screenName}}">
+            <li>{{game.owner.screenName}}</li>
+            {{#each game.players}}
+                <li>{{this.screenName}}</li>
+            {{/each}}
+        </ul>
+        <button id="startGameButton" type="button" style="display: {{startButtonDisplay}};">Start Game</button>
     </body>
 </html>

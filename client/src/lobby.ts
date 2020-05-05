@@ -1,7 +1,6 @@
 import { Player } from './model/player';
 import { PlayerListDto } from './dto/PlayerListDto';
 import { RegisterDto } from './dto/RegisterDto';
-import { StartGameDto } from './dto/StartGameDto';
 
 const thisGameId = (): string => window.location.pathname.split('/')[1];
 
@@ -33,8 +32,8 @@ const handleReceivePlayerList = (data: PlayerListDto): void => {
     }
 };
 
-const handleStartGameFromServer = (data: StartGameDto): void => {
-    document.location.href = data.url;
+const handleStartGameFromServer = (): void => {
+    alert('The game is starting!');
 };
 
 const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {

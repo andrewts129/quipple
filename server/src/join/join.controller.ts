@@ -7,19 +7,19 @@ import {
     BadRequestException,
     Res
 } from '@nestjs/common';
-import { JoinGameDto } from './dto/JoinGameDto';
-import { JoinGameValidationPipe } from './pipes/JoinGameValidationPipe';
+import { JoinGameDto } from './JoinGameDto';
+import { JoinGameValidationPipe } from './JoinGameValidationPipe';
 import { GameService } from '../game/game.service';
 import { PlayerService } from '../player/player.service';
 import { Player } from '../player/player.model';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
-import { LobbyGateway } from './lobby.gateway';
+import { GameplayGateway } from '../gameplay/gameplay.gateway';
 
 @Controller()
-export class LobbyController {
+export class JoinController {
     constructor(
-        private lobbyGateway: LobbyGateway,
+        private gameplayGateway: GameplayGateway,
         private gameService: GameService,
         private playerService: PlayerService,
         private authService: AuthService
@@ -42,7 +42,7 @@ export class LobbyController {
                 await this.gameService.addPlayer(game, player);
                 gameIdToRedirectTo = body.gameIdToJoin;
 
-                await this.lobbyGateway.updateClientPlayerLists(game);
+                await this.gameplayGateway.updateClientPlayerLists(game);
             } else {
                 throw new NotFoundException(`Game with ID ${body.gameIdToJoin} not found`);
             }
@@ -52,6 +52,6 @@ export class LobbyController {
         }
 
         res.cookie('jwt', await this.authService.getJwt(player));
-        res.redirect(303, `/${gameIdToRedirectTo}/lobby`);
+        res.redirect(303, `/${gameIdToRedirectTo}`);
     }
 }

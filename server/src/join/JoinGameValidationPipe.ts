@@ -7,7 +7,7 @@ import {
     HttpStatus
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { JoinGameDto } from '../dto/JoinGameDto';
+import { JoinGameDto } from './JoinGameDto';
 import { validate } from 'class-validator';
 
 @Injectable()

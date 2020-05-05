@@ -11,11 +11,10 @@ import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/PlayerListDto';
 import { Player } from '../player/player.model';
 import { NotFoundException } from '@nestjs/common';
-import { StartGameDto } from './dto/StartGameDto';
 
 // TODO validation & auth
 @WebSocketGateway({ namespace: 'lobby' })
-export class LobbyGateway implements OnGatewayDisconnect {
+export class GameplayGateway implements OnGatewayDisconnect {
     constructor(private gameService: GameService) {}
 
     @WebSocketServer()
@@ -41,9 +40,7 @@ export class LobbyGateway implements OnGatewayDisconnect {
         const [game, player] = this.clientPlayerGameMapping.get(client);
         if (game && player) {
             game.state = 'Running' as const;
-            this.server.to(game.id).emit('start', {
-                url: `/${game.id}/game`
-            } as StartGameDto);
+            this.server.to(game.id).emit('start');
         } else {
             throw new NotFoundException(`Unknown user`);
         }
@@ -51,9 +48,7 @@ export class LobbyGateway implements OnGatewayDisconnect {
 
     async handleDisconnect(client: Socket): Promise<void> {
         const [game, player] = this.clientPlayerGameMapping.get(client);
-
-        // Don't remove players when they left the page because they navigated to the game view
-        if (game && player && game.state === 'New') {
+        if (game && player) {
             await this.gameService.removePlayer(game, player);
             await this.updateClientPlayerLists(game);
         }
