@@ -22,7 +22,8 @@ export class ViewController {
         if (game) {
             const player = this.authService.extractPlayer(req);
             const startButtonDisplay = player.id === game.owner.id ? 'block' : 'none';
-            return { game, player, startButtonDisplay };
+            const waitingMessageDisplay = player.id !== game.owner.id ? 'block' : 'none';
+            return { game, player, startButtonDisplay, waitingMessageDisplay };
         } else {
             throw new NotFoundException(`Game with ID ${gameId} not found`);
         }

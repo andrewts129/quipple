@@ -22,7 +22,7 @@ export class GameService {
             id: randomGameId(),
             owner: await this.playerService.createPlayer(creatorScreenName),
             players: [],
-            state: 'New' as const
+            state: 'lobby' as const
         };
 
         this.games.set(game.id, game);

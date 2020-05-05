@@ -13,7 +13,7 @@ import { PlayerListDto } from './dto/PlayerListDto';
 import { Player } from '../player/player.model';
 
 // TODO validation & auth
-@WebSocketGateway({ namespace: 'lobby' })
+@WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway implements OnGatewayDisconnect {
     constructor(private gameService: GameService) {}
 
@@ -39,7 +39,7 @@ export class GameplayGateway implements OnGatewayDisconnect {
         const [game, player] = this.clientPlayerGameMapping.get(client);
         if (game && player) {
             if (player.id === game.owner.id) {
-                game.state = 'Running' as const;
+                game.state = 'question' as const;
                 this.server.to(game.id).emit('start');
             } else {
                 throw new WsException('Unauthorized');

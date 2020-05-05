@@ -33,7 +33,15 @@ const handleReceivePlayerList = (data: PlayerListDto): void => {
 };
 
 const handleStartGameFromServer = (): void => {
-    alert('The game is starting!');
+    const lobbyElements = document.getElementsByClassName('lobby');
+    Array.prototype.forEach.call(lobbyElements, (element: HTMLElement) => {
+        element.style.display = 'none';
+    });
+
+    const questionElements = document.getElementsByClassName('question');
+    Array.prototype.forEach.call(questionElements, (element: HTMLElement) => {
+        element.style.display = 'block';
+    });
 };
 
 const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {
@@ -43,7 +51,7 @@ const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {
 const main = (): void => {
     const player = thisPlayer();
 
-    const socket = io('/lobby');
+    const socket = io('/gameplay');
     socket.on('connect', () => {
         socket.emit('register', { gameId: thisGameId(), player } as RegisterDto);
 

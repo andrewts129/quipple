@@ -4,5 +4,5 @@ export class Game {
     id: string;
     owner: Player;
     players: Player[];
-    state: 'New' | 'Running';
+    state: 'lobby' | 'question';
 }

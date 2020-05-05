@@ -11,7 +11,7 @@
         <link rel="manifest" href="/site.webmanifest">
     </head>
     <body>
-        <h1>Lobby</h1>
+        <h1>Quipple</h1>
         <h2>Game ID: {{game.id}}</h2>
         <h3>Current Players</h3>
         <ul id="playerList" data-this-player-id="{{player.id}}" data-this-player-name="{{player.screenName}}">
@@ -20,6 +20,12 @@
                 <li>{{this.screenName}}</li>
             {{/each}}
         </ul>
-        <button id="startGameButton" type="button" style="display: {{startButtonDisplay}};">Start Game</button>
+        <div class="lobby">
+            <button id="startGameButton" type="button" style="display: {{startButtonDisplay}};">Start Game</button>
+            <p style="display: {{waitingMessageDisplay}};">Waiting for owner to start game...</p>
+        </div>
+        <div class="question" style="display: none;">
+            <p>TODO rest of game</p>
+        </div>
     </body>
 </html>
