@@ -13,11 +13,18 @@ import { PlayerListDto } from './dto/outgoing/PlayerListDto';
 import { AuthService } from '../auth/auth.service';
 import { Player } from '../player/player.model';
 import { StartRequestDto } from './dto/incoming/StartRequestDto';
+import { QuestionService } from '../question/question.service';
+import { NewQuestionDto } from './dto/outgoing/NewQuestionDto';
+import { SubmitAnswerDto } from './dto/incoming/SubmitAnswerDto';
 
 // TODO validation
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway implements OnGatewayDisconnect {
-    constructor(private gameService: GameService, private authService: AuthService) {}
+    constructor(
+        private gameService: GameService,
+        private questionService: QuestionService,
+        private authService: AuthService
+    ) {}
 
     @WebSocketServer()
     private server: Server;
@@ -47,8 +54,20 @@ export class GameplayGateway implements OnGatewayDisconnect {
         if (player.id === game.owner.id) {
             game.state = 'question' as const;
             this.server.to(game.id).emit('start');
+            this.sendNewQuestion(game);
         } else {
             throw new WsException('Unauthorized');
+        }
+    }
+
+    @SubscribeMessage('submitAnswer')
+    async handleSubmitAnswer(client: Socket, data: SubmitAnswerDto): Promise<void> {
+        const [game, player] = this.getRegistration(client, data.jwt);
+        if (game.state === 'question') {
+            // TODO actually do something with the answer
+            console.log(`Answer from ${player.screenName}: ${data.answer}`);
+        } else {
+            throw new WsException('Wrong state');
         }
     }
 
@@ -63,6 +82,11 @@ export class GameplayGateway implements OnGatewayDisconnect {
             owner: game.owner,
             players: game.players
         } as PlayerListDto);
+    }
+
+    async sendNewQuestion(game: Game): Promise<void> {
+        const question = await this.questionService.randomQuestion();
+        this.server.to(game.id).emit('newQuestion', { question } as NewQuestionDto);
     }
 
     getRegistration(client: Socket, receivedJwt?: string): [Game, Player] {

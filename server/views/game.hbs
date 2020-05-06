@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <title>{{game.id}} - Quipple</title>
         <script defer src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
-        <script defer src="/lobby.js"></script>
+        <script defer src="/game.js"></script>
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -20,15 +20,28 @@
                 <li>{{this.screenName}}</li>
             {{/each}}
         </ul>
-        <div class="lobby">
+        <div class="lobbyStage">
             <button id="startGameButton" type="button" style="display: {{startButtonDisplay}};">Start Game</button>
-            <p id="waitingMessage" style="display: {{waitingMessageDisplay}};">
+            <p id="startWaitingMessage" style="display: {{waitingMessageDisplay}};">
                 Waiting for <span id="ownerName">{{game.owner.screenName}}</span> to start the game...
             </p>
             <p id="countdownMessage"></p>
         </div>
-        <div class="question" style="display: none;">
-            <p>TODO rest of game goes here</p>
+        <div class="questionStage" style="display: none;">
+            <h3>Question</h3>
+            <p id="question">Loading...</p>
+            <h3>Your Answer</h3>
+            <div class="questionStage-presubmit">
+                <form>
+                    {{! TODO add label }}
+                    <input id="answerTextInput" name="answerText" type="text" minlength="1" maxlength="128" spellcheck="true">
+                    <button id="submitAnswerButton" type="button">Submit</button>
+                </form>
+            </div>
+            <div class="questionStage-postsubmit" style="display: none;">
+                <p id="mySubmission"></p>
+                <p id="postsubmitMessage">Waiting for other players to submit...</p>
+            </div>
         </div>
     </body>
 </html>
