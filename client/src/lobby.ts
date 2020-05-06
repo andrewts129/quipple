@@ -1,6 +1,7 @@
 import { Player } from './model/player';
 import { PlayerListDto } from './dto/incoming/PlayerListDto';
 import { RegisterDto } from './dto/outgoing/RegisterDto';
+import { StartRequestDto } from './dto/outgoing/StartRequestDto';
 
 const thisGameId = (): string => window.location.pathname.split('/')[2];
 
@@ -36,9 +37,11 @@ const handleReceivePlayerList = (data: PlayerListDto): void => {
         playerList.appendChild(listElement);
     });
 
+    document.getElementById('ownerName').innerText = data.owner.screenName;
+
     if (data.owner.id === thisPlayer().id) {
-        const startGameButton = document.getElementById('startGameButton');
-        startGameButton.style.display = 'block';
+        document.getElementById('startGameButton').style.display = 'block';
+        document.getElementById('waitingMessage').style.display = 'none';
     }
 };
 
@@ -55,7 +58,7 @@ const handleStartGameFromServer = (): void => {
 };
 
 const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {
-    socket.emit('start');
+    socket.emit('start', { jwt: thisPlayerJwt() } as StartRequestDto);
 };
 
 const main = (): void => {
@@ -66,11 +69,8 @@ const main = (): void => {
         socket.on('newPlayerList', handleReceivePlayerList);
         socket.on('start', handleStartGameFromServer);
 
-        // This button is only present for the owner
         const startGameButton = document.getElementById('startGameButton');
-        if (startGameButton) {
-            startGameButton.addEventListener('click', () => handleStartGameButtonClick(socket));
-        }
+        startGameButton.addEventListener('click', () => handleStartGameButtonClick(socket));
     });
 };
 

@@ -22,7 +22,9 @@
         </ul>
         <div class="lobby">
             <button id="startGameButton" type="button" style="display: {{startButtonDisplay}};">Start Game</button>
-            <p style="display: {{waitingMessageDisplay}};">Waiting for owner to start game...</p>
+            <p id="waitingMessage" style="display: {{waitingMessageDisplay}};">
+                Waiting for <span id="ownerName">{{game.owner.screenName}}</span> to start the game...
+            </p>
         </div>
         <div class="question" style="display: none;">
             <p>TODO rest of game goes here</p>

@@ -12,6 +12,7 @@ import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/outgoing/PlayerListDto';
 import { AuthService } from '../auth/auth.service';
 import { Player } from '../player/player.model';
+import { StartRequestDto } from './dto/incoming/StartRequestDto';
 
 // TODO validation
 @WebSocketGateway({ namespace: 'gameplay' })
@@ -41,8 +42,8 @@ export class GameplayGateway implements OnGatewayDisconnect {
     }
 
     @SubscribeMessage('start')
-    async handleStart(client: Socket): Promise<void> {
-        const [game, player] = this.getRegistration(client);
+    async handleStart(client: Socket, data: StartRequestDto): Promise<void> {
+        const [game, player] = this.getRegistration(client, data.jwt);
         if (player.id === game.owner.id) {
             game.state = 'question' as const;
             this.server.to(game.id).emit('start');
