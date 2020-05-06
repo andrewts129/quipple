@@ -9,7 +9,7 @@ import { GameModule } from '../game/game.module';
         GameModule,
         JwtModule.register({
             secret: process.env.JWT_SECRET_KEY,
-            signOptions: { expiresIn: '10 minutes' }
+            signOptions: { expiresIn: '30 minutes' }
         })
     ],
     providers: [AuthService, JwtStrategy],
