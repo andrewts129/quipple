@@ -46,15 +46,27 @@ const handleReceivePlayerList = (data: PlayerListDto): void => {
 };
 
 const handleStartGameFromServer = (): void => {
-    const lobbyElements = document.getElementsByClassName('lobby');
-    Array.prototype.forEach.call(lobbyElements, (element: HTMLElement) => {
-        element.style.display = 'none';
-    });
+    const changeCountdownMessage = (seconds: number): void => {
+        const message = `The game is starting in ${seconds}...`;
+        document.getElementById('countdownMessage').innerText = message;
+    };
 
-    const questionElements = document.getElementsByClassName('question');
-    Array.prototype.forEach.call(questionElements, (element: HTMLElement) => {
-        element.style.display = 'block';
-    });
+    const toggleLobbyVisibility = (): void => {
+        const lobbyElements = document.getElementsByClassName('lobby');
+        Array.prototype.forEach.call(lobbyElements, (element: HTMLElement) => {
+            element.style.display = 'none';
+        });
+
+        const questionElements = document.getElementsByClassName('question');
+        Array.prototype.forEach.call(questionElements, (element: HTMLElement) => {
+            element.style.display = 'block';
+        });
+    };
+
+    changeCountdownMessage(3);
+    setTimeout(() => changeCountdownMessage(2), 1000);
+    setTimeout(() => changeCountdownMessage(1), 2000);
+    setTimeout(toggleLobbyVisibility, 3000);
 };
 
 const handleStartGameButtonClick = (socket: SocketIOClient.Socket): void => {
