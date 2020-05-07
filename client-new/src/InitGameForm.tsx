@@ -1,19 +1,22 @@
 import React from 'react';
+import { navigate } from '@reach/router';
 import { StartGameDto } from './dto/outgoing/StartGameDto';
 import { JoinGameDto } from './dto/outgoing/JoinGameDto';
 import { StartJoinResponseDto } from './dto/incoming/StartJoinResponseDto';
+import { Player } from './model/player';
 
 // const validScreenName = (screenName: string): boolean => /^[a-zA-Z0-9]{3,20}$/.test(screenName);
 // const validGameId = (gameId: string): boolean => /^[a-zA-Z]{5}$/.test(gameId);
 
-type InitGameProps = {
+interface InitGameProps {
     onJwtChange: (jwt: string) => void;
-};
+    onPlayerChange: (player: Player) => void;
+}
 
-type InitGameFormState = {
+interface InitGameFormState {
     screenName: string;
     gameIdToJoin: string;
-};
+}
 
 // TODO add validation
 export class InitGameForm extends React.Component<InitGameProps, InitGameFormState> {
@@ -43,8 +46,7 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
             body: JSON.stringify(data)
         });
 
-        const responseData = (await response.json()) as StartJoinResponseDto;
-        this.props.onJwtChange(responseData.jwt);
+        this.handleServerResponse(await response.json());
     }
 
     async handleJoinButtonClick(): Promise<void> {
@@ -61,8 +63,13 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
             body: JSON.stringify(data)
         });
 
-        const responseData = (await response.json()) as StartJoinResponseDto;
-        this.props.onJwtChange(responseData.jwt);
+        this.handleServerResponse(await response.json());
+    }
+
+    handleServerResponse(response: StartJoinResponseDto): void {
+        this.props.onJwtChange(response.jwt);
+        this.props.onPlayerChange(response.player);
+        navigate(`/g/${response.gameId}`);
     }
 
     handleChange(event: any): void {
