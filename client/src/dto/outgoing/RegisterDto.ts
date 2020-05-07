@@ -1,4 +1,4 @@
-export class RegisterDto {
+export interface RegisterDto {
     gameId: string;
     jwt: string;
 }
