@@ -21,7 +21,7 @@
         "typescript": "~3.7.2"
     },
     "scripts": {
-        "build": "react-scripts build && mv build/ dist/",
+        "build": "react-scripts build",
         "clean": "rm -rf dist",
         "dev": "react-scripts start"
     },
