@@ -1,4 +1,6 @@
 import React from 'react';
+import { StartGameDto } from './dto/outgoing/StartGameDto';
+import { JoinGameDto } from './dto/outgoing/JoinGameDto';
 
 // const validScreenName = (screenName: string): boolean => /^[a-zA-Z0-9]{3,20}$/.test(screenName);
 // const validGameId = (gameId: string): boolean => /^[a-zA-Z]{5}$/.test(gameId);
@@ -18,13 +20,42 @@ export class InitGameForm extends React.Component<any, InitGameFormState> {
             gameIdToJoin: ''
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
+        this.handleJoinButtonClick = this.handleJoinButtonClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
-    handleSubmit(event: React.SyntheticEvent) {
-        alert(`${this.state.screenName} ${this.state.gameIdToJoin}`);
-        event.preventDefault();
+    async handleStartButtonClick() {
+        const data: StartGameDto = {
+            screenName: this.state.screenName
+        };
+
+        const response = await fetch('/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        console.log(await response.json());
+    }
+
+    async handleJoinButtonClick() {
+        const data: JoinGameDto = {
+            screenName: this.state.screenName,
+            gameIdToJoin: this.state.gameIdToJoin
+        };
+
+        const response = await fetch('/join', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        console.log(await response.json());
     }
 
     handleChange(event: any) {
@@ -40,7 +71,7 @@ export class InitGameForm extends React.Component<any, InitGameFormState> {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form>
                 <label>
                     Screen Name
                     <input
@@ -59,8 +90,12 @@ export class InitGameForm extends React.Component<any, InitGameFormState> {
                         onChange={this.handleChange}
                     />
                 </label>
-                <button type="submit">Start New Game</button>
-                <button type="submit">Join Game</button>
+                <button type="button" onClick={this.handleStartButtonClick}>
+                    Start New Game
+                </button>
+                <button type="button" onClick={this.handleJoinButtonClick}>
+                    Join Game
+                </button>
             </form>
         );
     }
