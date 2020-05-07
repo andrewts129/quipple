@@ -1,9 +1,14 @@
 import React from 'react';
 import { StartGameDto } from './dto/outgoing/StartGameDto';
 import { JoinGameDto } from './dto/outgoing/JoinGameDto';
+import { StartJoinResponseDto } from './dto/incoming/StartJoinResponseDto';
 
 // const validScreenName = (screenName: string): boolean => /^[a-zA-Z0-9]{3,20}$/.test(screenName);
 // const validGameId = (gameId: string): boolean => /^[a-zA-Z]{5}$/.test(gameId);
+
+type InitGameProps = {
+    onJwtChange: (jwt: string) => void;
+};
 
 type InitGameFormState = {
     screenName: string;
@@ -11,8 +16,8 @@ type InitGameFormState = {
 };
 
 // TODO add validation
-export class InitGameForm extends React.Component<any, InitGameFormState> {
-    constructor(props: any) {
+export class InitGameForm extends React.Component<InitGameProps, InitGameFormState> {
+    constructor(props: InitGameProps) {
         super(props);
 
         this.state = {
@@ -25,7 +30,7 @@ export class InitGameForm extends React.Component<any, InitGameFormState> {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    async handleStartButtonClick() {
+    async handleStartButtonClick(): Promise<void> {
         const data: StartGameDto = {
             screenName: this.state.screenName
         };
@@ -38,10 +43,11 @@ export class InitGameForm extends React.Component<any, InitGameFormState> {
             body: JSON.stringify(data)
         });
 
-        console.log(await response.json());
+        const responseData = (await response.json()) as StartJoinResponseDto;
+        this.props.onJwtChange(responseData.jwt);
     }
 
-    async handleJoinButtonClick() {
+    async handleJoinButtonClick(): Promise<void> {
         const data: JoinGameDto = {
             screenName: this.state.screenName,
             gameIdToJoin: this.state.gameIdToJoin
@@ -55,10 +61,11 @@ export class InitGameForm extends React.Component<any, InitGameFormState> {
             body: JSON.stringify(data)
         });
 
-        console.log(await response.json());
+        const responseData = (await response.json()) as StartJoinResponseDto;
+        this.props.onJwtChange(responseData.jwt);
     }
 
-    handleChange(event: any) {
+    handleChange(event: any): void {
         const targetValue = event.target.value;
         const targetName = event.target.name;
 
