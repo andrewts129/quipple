@@ -1,4 +1,5 @@
 .env
+**/react-app-env.d.ts
 
 # compiled output
 **/dist
