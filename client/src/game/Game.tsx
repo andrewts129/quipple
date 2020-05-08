@@ -1,12 +1,13 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
 import { Player } from '../model/player';
-import { Lobby } from './Lobby';
+import { Lobby } from './lobby/Lobby';
 import { RegisterDto } from '../dto/outgoing/RegisterDto';
 import { PlayerList } from './PlayerList';
 import { PlayerListDto } from '../dto/incoming/PlayerListDto';
 import { StartGameDto } from '../dto/incoming/StartGameDto';
-import { Starting } from './Starting';
+import { Starting } from './starting/Starting';
+import { Question } from './question/Question';
 
 type GameStages = 'lobby' | 'starting' | 'question';
 
@@ -92,7 +93,13 @@ export class Game extends React.Component<GameProps, GameState> {
                 case 'starting':
                     return <Starting />;
                 case 'question':
-                    return <p>TODO</p>;
+                    return (
+                        <Question
+                            jwt={this.props.jwt}
+                            questions={this.state.questions}
+                            socket={this.state.socket}
+                        />
+                    );
                 default:
                     return <p>ERROR</p>;
             }

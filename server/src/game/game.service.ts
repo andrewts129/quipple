@@ -38,6 +38,7 @@ export class GameService {
     }
 
     async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
+        // TODO something is causing exceptions in here
         if (playerToRemove.id === game.owner.id) {
             game.owner = game.players.shift();
         } else {

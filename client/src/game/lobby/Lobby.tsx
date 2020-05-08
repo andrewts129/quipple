@@ -1,6 +1,6 @@
 import React from 'react';
-import { Player } from '../model/player';
-import { StartRequestDto } from '../dto/outgoing/StartRequestDto';
+import { Player } from '../../model/player';
+import { StartRequestDto } from '../../dto/outgoing/StartRequestDto';
 
 interface LobbyProps {
     jwt: string;
