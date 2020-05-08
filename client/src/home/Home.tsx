@@ -1,7 +1,7 @@
 import React from 'react';
 import { InitGameForm } from './InitGameForm';
 import { RouteComponentProps } from '@reach/router';
-import { Player } from './model/player';
+import { Player } from '../model/player';
 
 interface HomeProps extends RouteComponentProps {
     onJwtChange: (jwt: string) => void;

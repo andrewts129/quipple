@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player } from './model/player';
+import { Player } from '../model/player';
 
 interface PlayerListProps {
     players: (Player | undefined)[];

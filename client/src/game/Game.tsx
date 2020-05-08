@@ -1,11 +1,11 @@
 import React from 'react';
 import { RouteComponentProps } from '@reach/router';
-import { Player } from './model/player';
+import { Player } from '../model/player';
 import { Lobby } from './Lobby';
-import { RegisterDto } from './dto/outgoing/RegisterDto';
-import { NewQuestionDto } from './dto/incoming/NewQuestionDto';
+import { RegisterDto } from '../dto/outgoing/RegisterDto';
+import { NewQuestionDto } from '../dto/incoming/NewQuestionDto';
 import { PlayerList } from './PlayerList';
-import { PlayerListDto } from './dto/incoming/PlayerListDto';
+import { PlayerListDto } from '../dto/incoming/PlayerListDto';
 
 interface GameProps extends RouteComponentProps<{ gameId: string }> {
     jwt: string | undefined;

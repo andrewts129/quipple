@@ -1,9 +1,9 @@
 import React from 'react';
 import { navigate } from '@reach/router';
-import { CreateGameDto } from './dto/outgoing/CreateGameDto';
-import { JoinGameDto } from './dto/outgoing/JoinGameDto';
-import { CreateJoinResponseDto } from './dto/incoming/CreateJoinResponseDto';
-import { Player } from './model/player';
+import { CreateGameDto } from '../dto/outgoing/CreateGameDto';
+import { JoinGameDto } from '../dto/outgoing/JoinGameDto';
+import { CreateJoinResponseDto } from '../dto/incoming/CreateJoinResponseDto';
+import { Player } from '../model/player';
 
 // const validScreenName = (screenName: string): boolean => /^[a-zA-Z0-9]{3,20}$/.test(screenName);
 // const validGameId = (gameId: string): boolean => /^[a-zA-Z]{5}$/.test(gameId);

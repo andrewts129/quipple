@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router } from '@reach/router';
-import { Home } from './Home';
-import { Game } from './Game';
+import { Home } from './home/Home';
+import { Game } from './game/Game';
 import { Player } from './model/player';
 
 interface AppState {
