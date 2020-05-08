@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Home } from './home/Home';
 import { Game } from './game/Game';
 import { Player } from './model/player';
+import './App.scss';
 
 interface AppState {
     title: string;
