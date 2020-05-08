@@ -37,9 +37,9 @@ export class GameplayGateway implements OnGatewayDisconnect {
         const player = this.authService.decodeJwt(data.jwt);
         if (game && player) {
             if (this.gameService.playerInGame(game, player)) {
-                await this.updateClientPlayerLists(game);
                 client.join(game.id);
                 this.registrations.set(client, [game, data.jwt]);
+                this.updateClientPlayerLists(game);
             } else {
                 throw new WsException('Unauthorized');
             }
