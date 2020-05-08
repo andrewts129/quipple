@@ -1,7 +1,9 @@
 .env
+**/react-app-env.d.ts
 
 # compiled output
 **/dist
+**/build
 **/node_modules
 
 # Logs

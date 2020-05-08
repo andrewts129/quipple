@@ -22,7 +22,7 @@ export class GameService {
             id: randomGameId(),
             owner: await this.playerService.createPlayer(creatorScreenName),
             players: [],
-            state: 'lobby' as const
+            stage: 'lobby' as const
         };
 
         this.games.set(game.id, game);
@@ -38,6 +38,7 @@ export class GameService {
     }
 
     async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
+        // TODO something is causing exceptions in here
         if (playerToRemove.id === game.owner.id) {
             game.owner = game.players.shift();
         } else {

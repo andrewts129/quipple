@@ -2,31 +2,21 @@ import {
     Injectable,
     PipeTransform,
     ArgumentMetadata,
-    BadRequestException,
     HttpException,
     HttpStatus
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { JoinGameDto } from './JoinGameDto';
+import { JoinGameDto } from '../dto/incoming/JoinGameDto';
 import { validate } from 'class-validator';
 
 @Injectable()
 export class JoinGameValidationPipe implements PipeTransform {
     async transform(entity: any, _metadata: ArgumentMetadata): Promise<JoinGameDto> {
-        let groups: string[];
-        if (entity.start) {
-            groups = ['start'];
-        } else if (entity.join) {
-            groups = ['join'];
-        } else {
-            throw new BadRequestException('Bad action type');
-        }
-
-        const entityAsDto = plainToClass(JoinGameDto, entity, { groups });
+        const entityAsDto = plainToClass(JoinGameDto, entity);
 
         entityAsDto.gameIdToJoin = entityAsDto.gameIdToJoin.toUpperCase();
 
-        const errors = await validate(entityAsDto, { groups });
+        const errors = await validate(entityAsDto);
         if (errors.length > 0) {
             throw new HttpException(
                 {

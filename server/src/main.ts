@@ -9,16 +9,13 @@ import * as cookieParser from 'cookie-parser';
 const bootstrap = async () => {
     const app = await NestFactory.create<NestExpressApplication>(RootModule);
 
-    app.useStaticAssets(join(__dirname, '..', '..', 'client', 'dist'), {
-        index: false,
+    app.useStaticAssets(join(__dirname, '..', '..', 'client', 'build'), {
         redirect: false
     });
 
-    app.setBaseViewsDir(join(__dirname, '..', 'views'));
-    app.setViewEngine('hbs');
-
+    // TODO still needed?
     app.use(cookieParser());
 
-    await app.listen(process.env.PORT || 3000);
+    await app.listen(process.env.PORT || 3001);
 };
 bootstrap();
