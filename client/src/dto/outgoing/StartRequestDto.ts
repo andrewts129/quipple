@@ -1,4 +1,4 @@
-export class StartRequestDto {
+export interface StartRequestDto {
     jwt: string;
     gameId: string;
 }

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Player } from '../model/player';
-import { StartGameDto } from '../dto/outgoing/StartGameDto';
+import { StartRequestDto } from '../dto/outgoing/StartRequestDto';
 
 interface LobbyProps {
     jwt: string;
     player: Player;
+    owner: Player | undefined;
     gameId: string;
     socket: SocketIOClient.Socket;
 }
@@ -13,20 +14,25 @@ export class Lobby extends React.Component<LobbyProps, {}> {
     constructor(props: LobbyProps) {
         super(props);
 
-        this.handleStartGame = this.handleStartGame.bind(this);
-
-        this.props.socket.on('start', this.handleStartGame);
+        this.handleClick = this.handleClick.bind(this);
     }
 
-    private handleStartGame(data: StartGameDto): void {
-        alert(JSON.stringify(data)); // TODO
+    private handleClick(): void {
+        this.props.socket.emit('start', {
+            jwt: this.props.jwt,
+            gameId: this.props.gameId
+        } as StartRequestDto);
     }
 
     render() {
-        return (
-            <>
-                <button type="button">Start Game</button>
-            </>
-        );
+        if (this.props.owner && this.props.owner.id === this.props.player.id) {
+            return (
+                <button type="button" onClick={this.handleClick}>
+                    Start Game
+                </button>
+            );
+        } else {
+            return <></>;
+        }
     }
 }

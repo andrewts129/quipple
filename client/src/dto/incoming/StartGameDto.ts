@@ -1,3 +1,3 @@
 export interface StartGameDto {
-    jwt: string;
+    questions: string[];
 }

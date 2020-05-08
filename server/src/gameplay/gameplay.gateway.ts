@@ -14,8 +14,8 @@ import { AuthService } from '../auth/auth.service';
 import { Player } from '../player/player.model';
 import { StartRequestDto } from './dto/incoming/StartRequestDto';
 import { QuestionService } from '../question/question.service';
-import { NewQuestionDto } from './dto/outgoing/NewQuestionDto';
 import { SubmitAnswerDto } from './dto/incoming/SubmitAnswerDto';
+import { StartGameDto } from './dto/outgoing/StartGameDto';
 
 // TODO validation
 @WebSocketGateway({ namespace: 'gameplay' })
@@ -51,10 +51,14 @@ export class GameplayGateway implements OnGatewayDisconnect {
     @SubscribeMessage('start')
     async handleStart(client: Socket, data: StartRequestDto): Promise<void> {
         const [game, player] = this.getRegistration(client, data.jwt);
-        if (player.id === game.owner.id) {
-            game.state = 'question' as const;
-            this.server.to(game.id).emit('start');
-            this.sendNewQuestion(game);
+        if (player.id === game.owner.id && game.id === data.gameId) {
+            const questions = await this.questionService.randomQuestions(3);
+            this.server.to(game.id).emit('start', { questions } as StartGameDto);
+
+            game.stage = 'starting' as const;
+            setTimeout(() => {
+                game.stage = 'question' as const;
+            }, 3000);
         } else {
             throw new WsException('Unauthorized');
         }
@@ -63,7 +67,7 @@ export class GameplayGateway implements OnGatewayDisconnect {
     @SubscribeMessage('submitAnswer')
     async handleSubmitAnswer(client: Socket, data: SubmitAnswerDto): Promise<void> {
         const [game, player] = this.getRegistration(client, data.jwt);
-        if (game.state === 'question') {
+        if (game.stage === 'question') {
             // TODO actually do something with the answer
             console.log(`Answer from ${player.screenName}: ${data.answer}`);
         } else {
@@ -82,11 +86,6 @@ export class GameplayGateway implements OnGatewayDisconnect {
             owner: game.owner,
             players: game.players
         } as PlayerListDto);
-    }
-
-    async sendNewQuestion(game: Game): Promise<void> {
-        const question = await this.questionService.randomQuestion();
-        this.server.to(game.id).emit('newQuestion', { question } as NewQuestionDto);
     }
 
     getRegistration(client: Socket, receivedJwt?: string): [Game, Player] {
