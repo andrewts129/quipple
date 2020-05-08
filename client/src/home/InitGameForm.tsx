@@ -86,30 +86,50 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
     render() {
         return (
             <form>
-                <label>
-                    Screen Name
+                <div className="field">
+                    <label htmlFor="screenName" className="label">
+                        Screen Name
+                    </label>
                     <input
                         name="screenName"
                         type="text"
                         value={this.state.screenName}
                         onChange={this.handleChange}
+                        className="input control"
                     />
-                </label>
-                <label>
-                    Game ID (if joining):
+                </div>
+                <div className="field">
+                    <label htmlFor="gameIdToJoin" className="label">
+                        Game ID (if joining):
+                    </label>
                     <input
                         name="gameIdToJoin"
                         type="text"
                         value={this.state.gameIdToJoin}
                         onChange={this.handleChange}
+                        className="input control"
                     />
-                </label>
-                <button type="button" onClick={this.handleStartButtonClick}>
-                    Start New Game
-                </button>
-                <button type="button" onClick={this.handleJoinButtonClick}>
-                    Join Game
-                </button>
+                </div>
+                <div className="field is-grouped">
+                    <div className="control">
+                        <button
+                            type="button"
+                            onClick={this.handleStartButtonClick}
+                            className="button is-primary"
+                        >
+                            Start New Game
+                        </button>
+                    </div>
+                    <div className="control">
+                        <button
+                            type="button"
+                            onClick={this.handleJoinButtonClick}
+                            className="button is-primary"
+                        >
+                            Join Game
+                        </button>
+                    </div>
+                </div>
             </form>
         );
     }

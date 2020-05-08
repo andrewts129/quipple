@@ -12,8 +12,10 @@ export class PlayerList extends React.Component<PlayerListProps, {}> {
             .map((player) => <li key={player?.id}>{player?.screenName}</li>);
         return (
             <>
-                <h3>Players:</h3>
-                <ul>{listItems}</ul>
+                <h5 className="subtitle is-5">Players:</h5>
+                <div className="content">
+                    <ul>{listItems}</ul>
+                </div>
             </>
         );
     }

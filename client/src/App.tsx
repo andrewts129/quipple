@@ -44,21 +44,23 @@ export class App extends React.Component<{}, AppState> {
                 <Helmet>
                     <title>{this.state.title}</title>
                 </Helmet>
-                <h1>Quipple</h1>
-                <Router>
-                    <Home
-                        path="/"
-                        onTitleChange={this.handleTitleChange}
-                        onJwtChange={this.handleJwtChange}
-                        onPlayerChange={this.handlePlayerChange}
-                    />
-                    <Game
-                        path="/g/:gameId"
-                        onTitleChange={this.handleTitleChange}
-                        jwt={this.state.jwt}
-                        player={this.state.player}
-                    ></Game>
-                </Router>
+                <div className="container">
+                    <h1 className="title is-1">Quipple</h1>
+                    <Router>
+                        <Home
+                            path="/"
+                            onTitleChange={this.handleTitleChange}
+                            onJwtChange={this.handleJwtChange}
+                            onPlayerChange={this.handlePlayerChange}
+                        />
+                        <Game
+                            path="/g/:gameId"
+                            onTitleChange={this.handleTitleChange}
+                            jwt={this.state.jwt}
+                            player={this.state.player}
+                        ></Game>
+                    </Router>
+                </div>
             </>
         );
     }

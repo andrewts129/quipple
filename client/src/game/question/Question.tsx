@@ -43,18 +43,22 @@ export class Question extends React.Component<QuestionProps, QuestionState> {
             <p>{this.state.answer}</p>
         ) : (
             <form>
-                <input type="text" onChange={this.handleChange} />
-                <button type="button" onClick={this.handleSubmit}>
-                    Submit
-                </button>
+                <div className="field">
+                    <input type="text" onChange={this.handleChange} className="input control" />
+                </div>
+                <div className="field">
+                    <button type="button" onClick={this.handleSubmit} className="button is-primary">
+                        Submit
+                    </button>
+                </div>
             </form>
         );
 
         return (
             <>
-                <h3>Question</h3>
+                <h3 className="subtitle is-3">Question</h3>
                 <p>{this.props.questions[0]}</p>
-                <h3>Your Answer</h3>
+                <h3 className="subtitle is-3">Your Answer</h3>
                 {answerSection}
             </>
         );

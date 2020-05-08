@@ -73,13 +73,15 @@ export class Game extends React.Component<GameProps, GameState> {
         if (this.props.jwt && this.props.player && this.props.gameId) {
             return (
                 <>
-                    <h2>Game ID: {this.props.gameId}</h2>
+                    <h3 className="subtitle is-3">
+                        Game ID: <span className="has-text-weight-bold">{this.props.gameId}</span>
+                    </h3>
                     <PlayerList players={[this.state.owner, ...this.state.players]} />
                     {this.getStageBody(this.state.stage)}
                 </>
             );
         } else {
-            return <h2>ERROR: Unauthorized</h2>;
+            return <h3 className="subtitle is-3">ERROR: Unauthorized</h3>;
         }
     }
 

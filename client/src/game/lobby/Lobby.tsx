@@ -25,12 +25,16 @@ export class Lobby extends React.Component<LobbyProps, {}> {
     }
 
     render() {
-        if (this.props.owner && this.props.owner.id === this.props.player.id) {
-            return (
-                <button type="button" onClick={this.handleClick}>
-                    Start Game
-                </button>
-            );
+        if (this.props.owner) {
+            if (this.props.owner.id === this.props.player.id) {
+                return (
+                    <button type="button" onClick={this.handleClick} className="button is-primary">
+                        Start Game
+                    </button>
+                );
+            } else {
+                return <p>Waiting for {this.props.owner.screenName} to start the game...</p>;
+            }
         } else {
             return <></>;
         }
