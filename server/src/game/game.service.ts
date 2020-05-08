@@ -38,11 +38,15 @@ export class GameService {
     }
 
     async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
-        // TODO something is causing exceptions in here
-        if (playerToRemove.id === game.owner.id) {
+        if (playerToRemove.id === game.owner?.id) {
             game.owner = game.players.shift();
         } else {
             game.players = game.players.filter((player) => player.id !== playerToRemove.id);
+        }
+
+        // If nobody is left in the game
+        if (await this.gameEmpty(game)) {
+            this.games.delete(game.id);
         }
     }
 
@@ -54,5 +58,9 @@ export class GameService {
         const allPlayers = await this.allPlayers(game);
         const playerIds = allPlayers.map((player) => player.id);
         return playerIds.includes(playerToFind.id);
+    }
+
+    async gameEmpty(game: Game): Promise<boolean> {
+        return !game.owner;
     }
 }

@@ -77,8 +77,14 @@ export class GameplayGateway implements OnGatewayDisconnect {
 
     async handleDisconnect(client: Socket): Promise<void> {
         const [game, player] = this.getRegistration(client);
-        await this.gameService.removePlayer(game, player);
-        await this.updateClientPlayerLists(game);
+        if (game || player) {
+            this.removeRegistration(client);
+
+            await this.gameService.removePlayer(game, player);
+            if (!(await this.gameService.gameEmpty(game))) {
+                this.updateClientPlayerLists(game);
+            }
+        }
     }
 
     async updateClientPlayerLists(game: Game): Promise<void> {
@@ -98,5 +104,9 @@ export class GameplayGateway implements OnGatewayDisconnect {
             const player = this.authService.decodeJwt(storedJwt);
             return [game, player];
         }
+    }
+
+    removeRegistration(client: Socket): void {
+        this.registrations.delete(client);
     }
 }
