@@ -22,17 +22,20 @@ export class Question extends React.Component<QuestionProps, QuestionState> {
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     private handleSubmit(): void {
-        const answer = 'todo'; // TODO
-
         this.props.socket.emit('submitAnswer', {
-            answer,
+            answer: this.state.answer,
             jwt: this.props.jwt
         } as SubmitAnswerDto);
 
-        this.setState({ answer, submitted: true });
+        this.setState({ submitted: true });
+    }
+
+    private handleChange(event: any): void {
+        this.setState({ answer: event.target.value });
     }
 
     render() {
@@ -40,7 +43,7 @@ export class Question extends React.Component<QuestionProps, QuestionState> {
             <p>{this.state.answer}</p>
         ) : (
             <form>
-                <input type="text" />
+                <input type="text" onChange={this.handleChange} />
                 <button type="button" onClick={this.handleSubmit}>
                     Submit
                 </button>

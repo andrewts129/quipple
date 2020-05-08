@@ -33,7 +33,7 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
         this.handleChange = this.handleChange.bind(this);
     }
 
-    async handleStartButtonClick(): Promise<void> {
+    private async handleStartButtonClick(): Promise<void> {
         const data: CreateGameDto = {
             screenName: this.state.screenName
         };
@@ -49,7 +49,7 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
         this.handleServerResponse(await response.json());
     }
 
-    async handleJoinButtonClick(): Promise<void> {
+    private async handleJoinButtonClick(): Promise<void> {
         const data: JoinGameDto = {
             screenName: this.state.screenName,
             gameIdToJoin: this.state.gameIdToJoin
@@ -66,13 +66,13 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
         this.handleServerResponse(await response.json());
     }
 
-    handleServerResponse(response: CreateJoinResponseDto): void {
+    private handleServerResponse(response: CreateJoinResponseDto): void {
         this.props.onJwtChange(response.jwt);
         this.props.onPlayerChange(response.player);
         navigate(`/g/${response.gameId}`);
     }
 
-    handleChange(event: any): void {
+    private handleChange(event: any): void {
         const targetValue = event.target.value;
         const targetName = event.target.name;
 
