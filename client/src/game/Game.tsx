@@ -8,6 +8,7 @@ import { PlayerListDto } from '../dto/incoming/PlayerListDto';
 import { StartGameDto } from '../dto/incoming/StartGameDto';
 import { Starting } from './starting/Starting';
 import { Question } from './question/Question';
+import io from 'socket.io-client';
 
 type GameStages = 'lobby' | 'starting' | 'question';
 
@@ -81,7 +82,14 @@ export class Game extends React.Component<GameProps, GameState> {
                 </>
             );
         } else {
-            return <h3 className="subtitle is-3">ERROR: Unauthorized</h3>;
+            return (
+                <>
+                    <h3 className="subtitle is-3">Unauthorized</h3>
+                    <p>
+                        Click <a href="/">here</a> to return to the homepage.
+                    </p>
+                </>
+            );
         }
     }
 
