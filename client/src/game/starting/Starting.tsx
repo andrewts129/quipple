@@ -11,7 +11,9 @@ export class Starting extends React.Component<{}, StartingState> {
         this.state = {
             secondsLeft: 3
         };
+    }
 
+    componentDidMount() {
         setTimeout(() => {
             this.setState({ secondsLeft: 2 });
         }, 1000);

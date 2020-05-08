@@ -38,7 +38,9 @@ export class Game extends React.Component<GameProps, GameState> {
 
         this.handleReceivePlayerList = this.handleReceivePlayerList.bind(this);
         this.handleStartGame = this.handleStartGame.bind(this);
+    }
 
+    componentDidMount() {
         this.state.socket.on('connect', () => {
             this.state.socket.emit('register', {
                 gameId: this.props.gameId,
