@@ -12,6 +12,7 @@ import { Question } from './question/Question';
 type GameStages = 'lobby' | 'starting' | 'question';
 
 interface GameProps extends RouteComponentProps<{ gameId: string }> {
+    onTitleChange: (title: string) => void;
     jwt: string | undefined;
     player: Player | undefined;
 }
@@ -41,6 +42,10 @@ export class Game extends React.Component<GameProps, GameState> {
     }
 
     componentDidMount() {
+        if (this.props.gameId) {
+            this.props.onTitleChange(`${this.props.gameId} - Quipple`);
+        }
+
         this.state.socket.on('connect', () => {
             this.state.socket.emit('register', {
                 gameId: this.props.gameId,
