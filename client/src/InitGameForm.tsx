@@ -1,8 +1,8 @@
 import React from 'react';
 import { navigate } from '@reach/router';
-import { StartGameDto } from './dto/outgoing/StartGameDto';
+import { CreateGameDto } from './dto/outgoing/CreateGameDto';
 import { JoinGameDto } from './dto/outgoing/JoinGameDto';
-import { StartJoinResponseDto } from './dto/incoming/StartJoinResponseDto';
+import { CreateJoinResponseDto } from './dto/incoming/CreateJoinResponseDto';
 import { Player } from './model/player';
 
 // const validScreenName = (screenName: string): boolean => /^[a-zA-Z0-9]{3,20}$/.test(screenName);
@@ -34,11 +34,11 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
     }
 
     async handleStartButtonClick(): Promise<void> {
-        const data: StartGameDto = {
+        const data: CreateGameDto = {
             screenName: this.state.screenName
         };
 
-        const response = await fetch('/start', {
+        const response = await fetch('/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ export class InitGameForm extends React.Component<InitGameProps, InitGameFormSta
         this.handleServerResponse(await response.json());
     }
 
-    handleServerResponse(response: StartJoinResponseDto): void {
+    handleServerResponse(response: CreateJoinResponseDto): void {
         this.props.onJwtChange(response.jwt);
         this.props.onPlayerChange(response.player);
         navigate(`/g/${response.gameId}`);

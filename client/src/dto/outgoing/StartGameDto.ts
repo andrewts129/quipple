@@ -1,3 +1,3 @@
 export interface StartGameDto {
-    screenName: string;
+    jwt: string;
 }

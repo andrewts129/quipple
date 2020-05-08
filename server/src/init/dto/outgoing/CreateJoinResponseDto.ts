@@ -1,6 +1,6 @@
 import { Player } from '../../../player/player.model';
 
-export class ResponseDto {
+export class CreateJoinResponseDto {
     gameId: string;
     player: Player;
     jwt: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from './model/player';
-import { StartRequestDto } from './dto/outgoing/StartRequestDto';
+import { StartGameDto } from './dto/outgoing/StartGameDto';
 
 interface LobbyProps {
     jwt: string;
@@ -13,12 +13,12 @@ export class Lobby extends React.Component<LobbyProps, {}> {
     constructor(props: LobbyProps) {
         super(props);
 
-        this.props.socket.on('start', this.handleStartGameFromServer);
+        this.handleStartGame = this.handleStartGame.bind(this);
 
-        this.handleStartGameFromServer = this.handleStartGameFromServer.bind(this);
+        this.props.socket.on('start', this.handleStartGame);
     }
 
-    private handleStartGameFromServer(data: StartRequestDto): void {
+    private handleStartGame(data: StartGameDto): void {
         alert(JSON.stringify(data)); // TODO
     }
 
