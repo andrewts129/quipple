@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router } from '@reach/router';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Home } from './home/Home';
 import { Game } from './game/Game';
 import { Player } from './model/player';
@@ -52,9 +52,11 @@ export class App extends React.Component<{}, AppState> {
         } else {
             return (
                 <>
-                    <Helmet>
-                        <title>{this.state.title}</title>
-                    </Helmet>
+                    <HelmetProvider>
+                        <Helmet>
+                            <title>{this.state.title}</title>
+                        </Helmet>
+                    </HelmetProvider>
                     <div className="container">
                         <h1 className="title is-1">Quipple</h1>
                         <Router>
