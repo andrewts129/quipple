@@ -2,7 +2,6 @@ import {
     SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
-    OnGatewayDisconnect,
     WsException
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
@@ -17,9 +16,8 @@ import { StartGameDto } from './dto/outgoing/StartGameDto';
 import { UseGuards } from '@nestjs/common';
 import { WsAuthGuard, AuthenticatedData } from '../auth/ws.auth.guard';
 
-// TODO validation
 @WebSocketGateway({ namespace: 'gameplay' })
-export class GameplayGateway implements OnGatewayDisconnect {
+export class GameplayGateway {
     constructor(
         private gameService: GameService,
         private questionService: QuestionService,
@@ -37,6 +35,8 @@ export class GameplayGateway implements OnGatewayDisconnect {
             if (this.gameService.playerInGame(game, data.player)) {
                 client.join(game.id);
                 this.updateClientPlayerLists(game);
+
+                client.on('disconnecting', () => this.handleClientDisconnect(client));
             } else {
                 throw new WsException('Unauthorized');
             }
@@ -79,24 +79,22 @@ export class GameplayGateway implements OnGatewayDisconnect {
         }
     }
 
-    async handleDisconnect(client: Socket): Promise<void> {
-        console.log(client.handshake.query?.jwt);
-        // const [game, player] = this.getRegistration(client);
-        // if (game || player) {
-        //     this.removeRegistration(client);
-
-        //     await this.gameService.removePlayer(game, player);
-        //     if (!(await this.gameService.gameEmpty(game))) {
-        //         this.updateClientPlayerLists(game);
-        //     }
-        // }
-    }
-
     async updateClientPlayerLists(game: Game): Promise<void> {
         this.server.to(game.id).emit('newPlayerList', {
             owner: game.owner,
             players: game.players
         } as PlayerListDto);
+    }
+
+    private async handleClientDisconnect(client: Socket): Promise<void> {
+        const jwt = client.handshake.query?.jwt;
+        const gameId = this.getRoom(client);
+        if (jwt && gameId) {
+            const game = await this.gameService.findGame(gameId);
+            const player = this.authService.decodeJwt(jwt);
+            await this.gameService.removePlayer(game, player);
+            this.updateClientPlayerLists(game);
+        }
     }
 
     private getRoom(client: Socket): string | undefined {
