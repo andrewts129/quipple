@@ -50,12 +50,8 @@ export class GameService {
         }
     }
 
-    async allPlayers(game: Game): Promise<Player[]> {
-        return [game.owner, ...game.players];
-    }
-
     async playerInGame(game: Game, playerToFind: Player): Promise<boolean> {
-        const allPlayers = await this.allPlayers(game);
+        const allPlayers = [game.owner, ...game.players];
         const playerIds = allPlayers.map((player) => player.id);
         return playerIds.includes(playerToFind.id);
     }

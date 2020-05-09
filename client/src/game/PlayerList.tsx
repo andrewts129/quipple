@@ -6,7 +6,7 @@ interface PlayerListProps {
 }
 
 export class PlayerList extends React.Component<PlayerListProps, {}> {
-    render() {
+    render(): JSX.Element {
         const listItems = this.props.players
             .filter((player) => player)
             .map((player) => <li key={player?.id}>{player?.screenName}</li>);

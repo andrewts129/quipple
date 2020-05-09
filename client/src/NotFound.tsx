@@ -2,7 +2,7 @@ import React from 'react';
 import { RouteComponentProps } from '@reach/router';
 
 export class NotFound extends React.Component<RouteComponentProps, {}> {
-    render() {
+    render(): JSX.Element {
         return (
             <>
                 <h3 className="subtitle is-3">Not Found</h3>

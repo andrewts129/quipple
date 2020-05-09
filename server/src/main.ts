@@ -6,7 +6,6 @@ import { RootModule } from './root.module';
 
 const bootstrap = async () => {
     const app = await NestFactory.create<NestExpressApplication>(RootModule);
-
     await app.listen(process.env.PORT || 3001);
 };
 bootstrap();

@@ -13,7 +13,7 @@ export class Starting extends React.Component<{}, StartingState> {
         };
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         setTimeout(() => {
             this.setState({ secondsLeft: 2 });
         }, 1000);
@@ -22,7 +22,7 @@ export class Starting extends React.Component<{}, StartingState> {
         }, 2000);
     }
 
-    render() {
+    render(): JSX.Element {
         return <p>The game is starting in {this.state.secondsLeft}...</p>;
     }
 }

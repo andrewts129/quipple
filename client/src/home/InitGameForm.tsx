@@ -13,7 +13,6 @@ interface InitGameProps {
     onPlayerChange: (player: Player) => void;
 }
 
-// TODO add validation
 export class InitGameForm extends React.Component<InitGameProps, {}> {
     constructor(props: InitGameProps) {
         super(props);
@@ -69,7 +68,7 @@ export class InitGameForm extends React.Component<InitGameProps, {}> {
         }
     }
 
-    render() {
+    render(): JSX.Element {
         const schema = Yup.object().shape({
             screenName: Yup.string()
                 .required()

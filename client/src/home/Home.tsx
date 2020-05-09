@@ -10,11 +10,11 @@ interface HomeProps extends RouteComponentProps {
 }
 
 export class Home extends React.Component<HomeProps, {}> {
-    componentDidMount() {
+    componentDidMount(): void {
         this.props.onTitleChange('Quipple');
     }
 
-    render() {
+    render(): JSX.Element {
         return (
             <InitGameForm
                 onJwtChange={this.props.onJwtChange}

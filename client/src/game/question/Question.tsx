@@ -36,7 +36,7 @@ export class Question extends React.Component<QuestionProps, QuestionState> {
         this.setState({ answer: event.target.value });
     }
 
-    render() {
+    render(): JSX.Element {
         const answerSection = this.state.submitted ? (
             <p>{this.state.answer}</p>
         ) : (

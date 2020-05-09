@@ -43,7 +43,7 @@ export class Game extends React.Component<GameProps, GameState> {
         this.handleStartGame = this.handleStartGame.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         if (this.props.gameId) {
             this.props.onTitleChange(`${this.props.gameId} - Quipple`);
         }
@@ -87,7 +87,7 @@ export class Game extends React.Component<GameProps, GameState> {
         }, 3000);
     }
 
-    render() {
+    render(): JSX.Element {
         if (!this.state.socket) {
             return <h3 className="subtitle is-3">Loading...</h3>;
         } else if (this.props.jwt && this.props.player && this.props.gameId) {

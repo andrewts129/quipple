@@ -19,7 +19,7 @@ export class Lobby extends React.Component<LobbyProps, {}> {
         this.props.socket.emit('start', {}); // Needs to have empty data for server authentication
     }
 
-    render() {
+    render(): JSX.Element {
         if (this.props.owner) {
             if (this.props.owner.id === this.props.player.id) {
                 return (

@@ -34,19 +34,19 @@ export class App extends React.Component<{}, AppState> {
         return { hasError: true };
     }
 
-    handleTitleChange(title: string): void {
+    private handleTitleChange(title: string): void {
         this.setState({ title });
     }
 
-    handleJwtChange(jwt: string): void {
+    private handleJwtChange(jwt: string): void {
         this.setState({ jwt });
     }
 
-    handlePlayerChange(player: Player): void {
+    private handlePlayerChange(player: Player): void {
         this.setState({ player });
     }
 
-    render() {
+    render(): JSX.Element {
         if (this.state.hasError) {
             return <h1>Internal Server Error</h1>;
         } else {
