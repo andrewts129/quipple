@@ -48,7 +48,7 @@ export class Game extends React.Component<GameProps, GameState> {
             this.props.onTitleChange(`${this.props.gameId} - Quipple`);
         }
 
-        const socket = io('/gameplay');
+        const socket = io('/gameplay', { query: { jwt: this.props.jwt || 'noJwt' } });
         socket
             .on('connect', this.handleConnect)
             .on('newPlayerList', this.handleReceivePlayerList)
