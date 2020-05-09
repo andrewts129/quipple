@@ -72,7 +72,7 @@ export class App extends React.Component<{}, AppState> {
                                 jwt={this.state.jwt}
                                 player={this.state.player}
                             />
-                            <NotFound default />
+                            <NotFound default path="/NotFound" />
                         </Router>
                     </div>
                 </>

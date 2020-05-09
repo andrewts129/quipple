@@ -12,6 +12,7 @@
         "prod": "(cd client && npm run build); (cd server && npm run prod);"
     },
     "devDependencies": {
+        "@types/yup": "^0.28.1",
         "@typescript-eslint/eslint-plugin": "^2.31.0",
         "@typescript-eslint/parser": "^2.31.0",
         "concurrently": "^5.2.0",
@@ -24,5 +25,8 @@
         "eslint-plugin-react-hooks": "^4.0.0",
         "prettier": "^2.0.5",
         "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "yup": "^0.28.5"
     }
 }
