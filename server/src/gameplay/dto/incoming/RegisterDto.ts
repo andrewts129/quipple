@@ -5,6 +5,4 @@ export class RegisterDto {
     @IsUppercase()
     @Length(5, 5)
     gameId: string;
-
-    jwt: string;
 }

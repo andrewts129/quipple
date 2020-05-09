@@ -1,9 +1,7 @@
 import React from 'react';
 import { Player } from '../../model/player';
-import { StartRequestDto } from '../../dto/outgoing/StartRequestDto';
 
 interface LobbyProps {
-    jwt: string;
     player: Player;
     owner: Player | undefined;
     gameId: string;
@@ -18,10 +16,7 @@ export class Lobby extends React.Component<LobbyProps, {}> {
     }
 
     private handleClick(): void {
-        this.props.socket.emit('start', {
-            jwt: this.props.jwt,
-            gameId: this.props.gameId
-        } as StartRequestDto);
+        this.props.socket.emit('start', {}); // Needs to have empty data for server authentication
     }
 
     render() {

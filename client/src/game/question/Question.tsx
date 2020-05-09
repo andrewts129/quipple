@@ -2,7 +2,6 @@ import React from 'react';
 import { SubmitAnswerDto } from '../../dto/outgoing/SubmitAnswerDto';
 
 interface QuestionProps {
-    jwt: string;
     questions: string[];
     socket: SocketIOClient.Socket;
 }
@@ -27,8 +26,7 @@ export class Question extends React.Component<QuestionProps, QuestionState> {
 
     private handleSubmit(): void {
         this.props.socket.emit('submitAnswer', {
-            answer: this.state.answer,
-            jwt: this.props.jwt
+            answer: this.state.answer
         } as SubmitAnswerDto);
 
         this.setState({ submitted: true });

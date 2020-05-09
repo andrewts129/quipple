@@ -11,13 +11,11 @@ import { GameService } from '../game/game.service';
 import { Game } from '../game/game.model';
 import { PlayerListDto } from './dto/outgoing/PlayerListDto';
 import { AuthService } from '../auth/auth.service';
-import { Player } from '../player/player.model';
-import { StartRequestDto } from './dto/incoming/StartRequestDto';
 import { QuestionService } from '../question/question.service';
 import { SubmitAnswerDto } from './dto/incoming/SubmitAnswerDto';
 import { StartGameDto } from './dto/outgoing/StartGameDto';
 import { UseGuards } from '@nestjs/common';
-import { WsAuthGuard } from '../auth/ws.auth.guard';
+import { WsAuthGuard, AuthenticatedData } from '../auth/ws.auth.guard';
 
 // TODO validation
 @WebSocketGateway({ namespace: 'gameplay' })
@@ -31,17 +29,13 @@ export class GameplayGateway implements OnGatewayDisconnect {
     @WebSocketServer()
     private server: Server;
 
-    private registrations: Map<Socket, [Game, string]> = new Map();
-
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('register')
-    async handleRegister(client: Socket, data: RegisterDto): Promise<void> {
+    async handleRegister(client: Socket, data: RegisterDto & AuthenticatedData): Promise<void> {
         const game = await this.gameService.findGame(data.gameId);
-        const player = this.authService.decodeJwt(data.jwt);
-        if (game && player) {
-            if (this.gameService.playerInGame(game, player)) {
+        if (game) {
+            if (this.gameService.playerInGame(game, data.player)) {
                 client.join(game.id);
-                this.registrations.set(client, [game, data.jwt]);
                 this.updateClientPlayerLists(game);
             } else {
                 throw new WsException('Unauthorized');
@@ -53,9 +47,10 @@ export class GameplayGateway implements OnGatewayDisconnect {
 
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('start')
-    async handleStart(client: Socket, data: StartRequestDto): Promise<void> {
-        const [game, player] = this.getRegistration(client, data.jwt);
-        if (player.id === game.owner.id && game.id === data.gameId) {
+    async handleStart(client: Socket, data: AuthenticatedData): Promise<void> {
+        const gameId = this.getRoom(client);
+        const game = await this.gameService.findGame(gameId);
+        if (data.player.id === game.owner.id && game.id === gameId) {
             const questions = await this.questionService.randomQuestions(3);
             this.server.to(game.id).emit('start', { questions } as StartGameDto);
 
@@ -70,26 +65,31 @@ export class GameplayGateway implements OnGatewayDisconnect {
 
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('submitAnswer')
-    async handleSubmitAnswer(client: Socket, data: SubmitAnswerDto): Promise<void> {
-        const [game, player] = this.getRegistration(client, data.jwt);
+    async handleSubmitAnswer(
+        client: Socket,
+        data: SubmitAnswerDto & AuthenticatedData
+    ): Promise<void> {
+        const gameId = this.getRoom(client);
+        const game = await this.gameService.findGame(gameId);
         if (game.stage === 'question') {
             // TODO actually do something with the answer
-            console.log(`Answer from ${player.screenName}: ${data.answer}`);
+            console.log(`Answer from ${data.player.screenName}: ${data.answer}`);
         } else {
             throw new WsException('Wrong state');
         }
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        const [game, player] = this.getRegistration(client);
-        if (game || player) {
-            this.removeRegistration(client);
+        console.log(client.handshake.query?.jwt);
+        // const [game, player] = this.getRegistration(client);
+        // if (game || player) {
+        //     this.removeRegistration(client);
 
-            await this.gameService.removePlayer(game, player);
-            if (!(await this.gameService.gameEmpty(game))) {
-                this.updateClientPlayerLists(game);
-            }
-        }
+        //     await this.gameService.removePlayer(game, player);
+        //     if (!(await this.gameService.gameEmpty(game))) {
+        //         this.updateClientPlayerLists(game);
+        //     }
+        // }
     }
 
     async updateClientPlayerLists(game: Game): Promise<void> {
@@ -99,19 +99,8 @@ export class GameplayGateway implements OnGatewayDisconnect {
         } as PlayerListDto);
     }
 
-    getRegistration(client: Socket, receivedJwt?: string): [Game, Player] {
-        const [game, storedJwt] = this.registrations.get(client);
-        if (!game || !storedJwt) {
-            throw new WsException('Not registered');
-        } else if (receivedJwt && receivedJwt !== storedJwt) {
-            throw new WsException('Authorization not valid');
-        } else {
-            const player = this.authService.decodeJwt(storedJwt);
-            return [game, player];
-        }
-    }
-
-    removeRegistration(client: Socket): void {
-        this.registrations.delete(client);
+    private getRoom(client: Socket): string | undefined {
+        const rooms = Object.keys(client.rooms);
+        return rooms.find((room) => /^[A-Z]{5}$/.test(room));
     }
 }

@@ -71,8 +71,7 @@ export class Game extends React.Component<GameProps, GameState> {
 
     private handleConnect(): void {
         this.state.socket?.emit('register', {
-            gameId: this.props.gameId,
-            jwt: this.props.jwt
+            gameId: this.props.gameId
         } as RegisterDto);
     }
 
@@ -115,12 +114,11 @@ export class Game extends React.Component<GameProps, GameState> {
 
     private getStageBody(stage: GameStages) {
         // These all exist, just making the compiler happy
-        if (this.props.jwt && this.props.player && this.props.gameId && this.state.socket) {
+        if (this.props.player && this.props.gameId && this.state.socket) {
             switch (stage) {
                 case 'lobby':
                     return (
                         <Lobby
-                            jwt={this.props.jwt}
                             player={this.props.player}
                             owner={this.state.owner}
                             gameId={this.props.gameId}
@@ -130,13 +128,7 @@ export class Game extends React.Component<GameProps, GameState> {
                 case 'starting':
                     return <Starting />;
                 case 'question':
-                    return (
-                        <Question
-                            jwt={this.props.jwt}
-                            questions={this.state.questions}
-                            socket={this.state.socket}
-                        />
-                    );
+                    return <Question questions={this.state.questions} socket={this.state.socket} />;
                 default:
                     return <p>ERROR</p>;
             }
