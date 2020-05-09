@@ -27,7 +27,7 @@ export class InitController {
         return {
             gameId: game.id,
             player,
-            jwt: await this.authService.getJwt(player)
+            jwt: await this.authService.createJwt(player)
         };
     }
 
@@ -43,7 +43,7 @@ export class InitController {
             return {
                 gameId: game.id,
                 player,
-                jwt: await this.authService.getJwt(player)
+                jwt: await this.authService.createJwt(player)
             };
         } else {
             throw new NotFoundException(`Game with ID ${body.gameIdToJoin} not found`);
