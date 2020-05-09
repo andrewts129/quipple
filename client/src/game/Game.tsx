@@ -19,7 +19,7 @@ interface GameProps extends RouteComponentProps<{ gameId: string }> {
 }
 
 interface GameState {
-    socket: SocketIOClient.Socket;
+    socket: SocketIOClient.Socket | undefined;
     owner: Player | undefined;
     players: (Player | undefined)[];
     stage: GameStages;
@@ -31,13 +31,14 @@ export class Game extends React.Component<GameProps, GameState> {
         super(props);
 
         this.state = {
-            socket: io('/gameplay'),
+            socket: undefined,
             owner: undefined,
             players: [this.props.player],
             stage: 'lobby',
             questions: []
         };
 
+        this.handleConnect = this.handleConnect.bind(this);
         this.handleReceivePlayerList = this.handleReceivePlayerList.bind(this);
         this.handleStartGame = this.handleStartGame.bind(this);
     }
@@ -47,15 +48,32 @@ export class Game extends React.Component<GameProps, GameState> {
             this.props.onTitleChange(`${this.props.gameId} - Quipple`);
         }
 
-        this.state.socket.on('connect', () => {
-            this.state.socket.emit('register', {
-                gameId: this.props.gameId,
-                jwt: this.props.jwt
-            } as RegisterDto);
+        const socket = io('/gameplay');
+        socket
+            .on('connect', this.handleConnect)
+            .on('newPlayerList', this.handleReceivePlayerList)
+            .on('start', this.handleStartGame)
+            .on('error', () => {
+                alert('socket error');
+            })
+            .on('connect_error', () => {
+                alert('socket connection error');
+            })
+            .on('connect_error', () => {
+                alert('socket connection timeout');
+            })
+            .on('disconnect', () => {
+                alert('socket disconnect');
+            });
 
-            this.state.socket.on('newPlayerList', this.handleReceivePlayerList);
-            this.state.socket.on('start', this.handleStartGame);
-        });
+        this.setState({ socket });
+    }
+
+    private handleConnect(): void {
+        this.state.socket?.emit('register', {
+            gameId: this.props.gameId,
+            jwt: this.props.jwt
+        } as RegisterDto);
     }
 
     private handleReceivePlayerList(data: PlayerListDto): void {
@@ -71,7 +89,9 @@ export class Game extends React.Component<GameProps, GameState> {
     }
 
     render() {
-        if (this.props.jwt && this.props.player && this.props.gameId) {
+        if (!this.state.socket) {
+            return <h3 className="subtitle is-3">Loading...</h3>;
+        } else if (this.props.jwt && this.props.player && this.props.gameId) {
             return (
                 <>
                     <h3 className="subtitle is-3">
@@ -95,7 +115,7 @@ export class Game extends React.Component<GameProps, GameState> {
 
     private getStageBody(stage: GameStages) {
         // These all exist, just making the compiler happy
-        if (this.props.jwt && this.props.player && this.props.gameId) {
+        if (this.props.jwt && this.props.player && this.props.gameId && this.state.socket) {
             switch (stage) {
                 case 'lobby':
                     return (
