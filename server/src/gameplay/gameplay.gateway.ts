@@ -16,6 +16,8 @@ import { StartRequestDto } from './dto/incoming/StartRequestDto';
 import { QuestionService } from '../question/question.service';
 import { SubmitAnswerDto } from './dto/incoming/SubmitAnswerDto';
 import { StartGameDto } from './dto/outgoing/StartGameDto';
+import { UseGuards } from '@nestjs/common';
+import { WsAuthGuard } from '../auth/ws.auth.guard';
 
 // TODO validation
 @WebSocketGateway({ namespace: 'gameplay' })
@@ -31,6 +33,7 @@ export class GameplayGateway implements OnGatewayDisconnect {
 
     private registrations: Map<Socket, [Game, string]> = new Map();
 
+    @UseGuards(WsAuthGuard)
     @SubscribeMessage('register')
     async handleRegister(client: Socket, data: RegisterDto): Promise<void> {
         const game = await this.gameService.findGame(data.gameId);
@@ -48,6 +51,7 @@ export class GameplayGateway implements OnGatewayDisconnect {
         }
     }
 
+    @UseGuards(WsAuthGuard)
     @SubscribeMessage('start')
     async handleStart(client: Socket, data: StartRequestDto): Promise<void> {
         const [game, player] = this.getRegistration(client, data.jwt);
@@ -64,6 +68,7 @@ export class GameplayGateway implements OnGatewayDisconnect {
         }
     }
 
+    @UseGuards(WsAuthGuard)
     @SubscribeMessage('submitAnswer')
     async handleSubmitAnswer(client: Socket, data: SubmitAnswerDto): Promise<void> {
         const [game, player] = this.getRegistration(client, data.jwt);
