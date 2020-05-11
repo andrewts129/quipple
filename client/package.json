@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "",
     "author": "andrewts129@gmail.com",
-    "proxy": "http://localhost:3001/",
+    "proxy": "http://localhost:4000/",
     "scripts": {
         "build": "react-scripts build",
         "clean": "rm -rf build",

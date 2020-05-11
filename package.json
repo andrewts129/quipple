@@ -5,11 +5,13 @@
     "author": "andrewts129@gmail.com",
     "license": "ISC",
     "scripts": {
+        "build": "(cd client && npm run build); (cd server && npm run build);",
+        "clean": "(cd client && npm run clean); (cd server && npm run clean);",
         "dev": "concurrently \"(cd client && npm run dev);\" \"(cd server && npm run dev);\"",
         "format": "prettier --write 'server/src/**/*.ts' 'client/src/**/*.ts';",
         "lint": "eslint 'server/src/**/*.ts' 'client/src/**/*.ts' --fix --color",
         "postinstall": "(cd client && npm install); (cd server && npm install);",
-        "prod": "(cd client && npm run build); (cd server && npm run prod);"
+        "start": "cd server && npm run start"
     },
     "devDependencies": {
         "@types/yup": "^0.28.1",

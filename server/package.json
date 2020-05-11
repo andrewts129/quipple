@@ -4,9 +4,10 @@
     "description": "",
     "author": "andrewts129@gmail.com",
     "scripts": {
-        "clean": "rm -rf dist && rm -rf node_modules",
+        "build": "npm run clean && tsc -p tsconfig.build.json",
+        "clean": "rm -rf dist",
         "dev": "nest start --watch --debug --preserveWatchOutput",
-        "prod": "rm -rf dist && tsc -p tsconfig.build.json && node dist/main",
+        "start": "node dist/main",
         "test": "jest"
     },
     "dependencies": {
