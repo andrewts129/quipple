@@ -5,33 +5,30 @@ import { Home } from './home/Home';
 import { Game } from './game/Game';
 import { Player } from './model/player';
 import './App.scss';
-import { ErrorView } from './ErrorView';
+
+interface AppProps {
+    onError: (error: Error) => void;
+}
 
 interface AppState {
     title: string;
     jwt: string | undefined;
     player: Player | undefined;
-    error: Error | undefined;
 }
 
-export class App extends React.Component<{}, AppState> {
-    constructor(props: {}) {
+export class App extends React.Component<AppProps, AppState> {
+    constructor(props: AppProps) {
         super(props);
 
         this.state = {
             title: 'Quipple',
             jwt: undefined,
-            player: undefined,
-            error: undefined
+            player: undefined
         };
 
         this.handleTitleChange = this.handleTitleChange.bind(this);
         this.handleJwtChange = this.handleJwtChange.bind(this);
         this.handlePlayerChange = this.handlePlayerChange.bind(this);
-    }
-
-    componentDidCatch(error: Error) {
-        this.setState({ error });
     }
 
     private handleTitleChange(title: string): void {
@@ -47,35 +44,33 @@ export class App extends React.Component<{}, AppState> {
     }
 
     render(): JSX.Element {
-        if (this.state.error) {
-            return <ErrorView error={this.state.error} />;
-        } else {
-            return (
-                <>
-                    <HelmetProvider>
-                        <Helmet>
-                            <title>{this.state.title}</title>
-                        </Helmet>
-                    </HelmetProvider>
-                    <div className="container">
-                        <h1 className="title is-1">Quipple</h1>
-                        <Router>
-                            <Home
-                                path="/"
-                                onTitleChange={this.handleTitleChange}
-                                onJwtChange={this.handleJwtChange}
-                                onPlayerChange={this.handlePlayerChange}
-                            />
-                            <Game
-                                path="/g/:gameId"
-                                onTitleChange={this.handleTitleChange}
-                                jwt={this.state.jwt}
-                                player={this.state.player}
-                            />
-                        </Router>
-                    </div>
-                </>
-            );
-        }
+        return (
+            <>
+                <HelmetProvider>
+                    <Helmet>
+                        <title>{this.state.title}</title>
+                    </Helmet>
+                </HelmetProvider>
+                <div className="container">
+                    <h1 className="title is-1">Quipple</h1>
+                    <Router>
+                        <Home
+                            path="/"
+                            onError={this.props.onError}
+                            onTitleChange={this.handleTitleChange}
+                            onJwtChange={this.handleJwtChange}
+                            onPlayerChange={this.handlePlayerChange}
+                        />
+                        <Game
+                            path="/g/:gameId"
+                            onError={this.props.onError}
+                            onTitleChange={this.handleTitleChange}
+                            jwt={this.state.jwt}
+                            player={this.state.player}
+                        />
+                    </Router>
+                </div>
+            </>
+        );
     }
 }

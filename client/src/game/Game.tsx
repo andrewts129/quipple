@@ -13,6 +13,7 @@ import io from 'socket.io-client';
 type GameStages = 'lobby' | 'starting' | 'question';
 
 interface GameProps extends RouteComponentProps<{ gameId: string }> {
+    onError: (error: Error) => void;
     onTitleChange: (title: string) => void;
     jwt: string | undefined;
     player: Player | undefined;
@@ -54,16 +55,16 @@ export class Game extends React.Component<GameProps, GameState> {
             .on('newPlayerList', this.handleReceivePlayerList)
             .on('start', this.handleStartGame)
             .on('error', () => {
-                alert('socket error');
+                this.props.onError(new Error('Error from server'));
             })
             .on('connect_error', () => {
-                alert('socket connection error');
+                this.props.onError(new Error('Server connection error'));
             })
-            .on('connect_error', () => {
-                alert('socket connection timeout');
+            .on('connect_timeout', () => {
+                this.props.onError(new Error('Connection attempt to server timed out'));
             })
             .on('disconnect', () => {
-                alert('socket disconnect');
+                this.props.onError(new Error('Connection with server lost'));
             });
 
         this.setState({ socket });
@@ -101,14 +102,8 @@ export class Game extends React.Component<GameProps, GameState> {
                 </>
             );
         } else {
-            return (
-                <>
-                    <h3 className="subtitle is-3">Unauthorized</h3>
-                    <p>
-                        Click <a href="/">here</a> to return to the homepage.
-                    </p>
-                </>
-            );
+            this.props.onError(new Error('Unauthorized'));
+            return <></>;
         }
     }
 

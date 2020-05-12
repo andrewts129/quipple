@@ -9,6 +9,7 @@ import { Player } from '../model/player';
 import { HttpErrorResponseDto } from '../dto/incoming/HttpErrorResponseDto';
 
 interface InitGameProps {
+    onError: (error: Error) => void;
     onJwtChange: (jwt: string) => void;
     onPlayerChange: (player: Player) => void;
 }
@@ -62,9 +63,9 @@ export class InitGameForm extends React.Component<InitGameProps, {}> {
             this.props.onPlayerChange(response.player);
             navigate(`/g/${response.gameId}`);
         } else if (isError(response) && response.statusCode === 404) {
-            throw new Error('Game not found');
+            this.props.onError(new Error('Game not found'));
         } else {
-            throw new Error('Unexpected server error');
+            this.props.onError(new Error('Unexpected server error'));
         }
     }
 
