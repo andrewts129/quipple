@@ -1,15 +1,13 @@
-import { Player } from './player.model';
+import { Player } from './player.entity';
 import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PlayerService {
-    private static serial = -1; // TODO this is bad
+    constructor(@InjectRepository(Player) private playerRepository: Repository<Player>) {}
 
     async createPlayer(screenName: string): Promise<Player> {
-        PlayerService.serial++;
-        return {
-            id: PlayerService.serial,
-            screenName
-        };
+        return this.playerRepository.save({ screenName });
     }
 }

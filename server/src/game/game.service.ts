@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Game } from './game.model';
 import { PlayerService } from '../player/player.service';
-import { Player } from '../player/player.model';
+import { Player } from '../player/player.entity';
 
 const randomGameId = (): string => {
     const randomChar = (s: string): string => s[Math.floor(Math.random() * s.length)];
