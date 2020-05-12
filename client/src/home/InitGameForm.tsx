@@ -62,9 +62,9 @@ export class InitGameForm extends React.Component<InitGameProps, {}> {
             this.props.onPlayerChange(response.player);
             navigate(`/g/${response.gameId}`);
         } else if (isError(response) && response.statusCode === 404) {
-            navigate('/NotFound');
+            throw new Error('Game not found');
         } else {
-            alert('Unexpected server error');
+            throw new Error('Unexpected server error');
         }
     }
 

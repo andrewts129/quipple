@@ -5,13 +5,13 @@ import { Home } from './home/Home';
 import { Game } from './game/Game';
 import { Player } from './model/player';
 import './App.scss';
-import { NotFound } from './NotFound';
+import { ErrorView } from './ErrorView';
 
 interface AppState {
     title: string;
     jwt: string | undefined;
     player: Player | undefined;
-    hasError: boolean;
+    error: Error | undefined;
 }
 
 export class App extends React.Component<{}, AppState> {
@@ -22,7 +22,7 @@ export class App extends React.Component<{}, AppState> {
             title: 'Quipple',
             jwt: undefined,
             player: undefined,
-            hasError: false
+            error: undefined
         };
 
         this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -30,8 +30,8 @@ export class App extends React.Component<{}, AppState> {
         this.handlePlayerChange = this.handlePlayerChange.bind(this);
     }
 
-    static getDerivedStateFromError() {
-        return { hasError: true };
+    componentDidCatch(error: Error) {
+        this.setState({ error });
     }
 
     private handleTitleChange(title: string): void {
@@ -47,8 +47,8 @@ export class App extends React.Component<{}, AppState> {
     }
 
     render(): JSX.Element {
-        if (this.state.hasError) {
-            return <h1>Internal Server Error</h1>;
+        if (this.state.error) {
+            return <ErrorView error={this.state.error} />;
         } else {
             return (
                 <>
@@ -72,7 +72,6 @@ export class App extends React.Component<{}, AppState> {
                                 jwt={this.state.jwt}
                                 player={this.state.player}
                             />
-                            <NotFound default path="/NotFound" />
                         </Router>
                     </div>
                 </>
