@@ -106,8 +106,12 @@ export class GameplayGateway {
             try {
                 const game = await this.gameService.findGame(gameId);
                 const player = this.authService.decodeJwt(jwt);
-                await this.gameService.removePlayer(game.id, player.id);
-                this.updateClientPlayerLists(game.id);
+                const updatedGame = await this.gameService.removePlayer(game.id, player.id);
+
+                // If the game came back deleted, it's out of players, so don't bother with the update
+                if (updatedGame?.id) {
+                    this.updateClientPlayerLists(game.id);
+                }
             } catch (e) {
                 // Swallow NotFoundExceptions - if the game doesn't exist, that's fine, just do nothing
                 if (!(e instanceof NotFoundException)) {
