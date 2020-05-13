@@ -33,10 +33,6 @@ export class GameService {
     async findGame(id: string): Promise<Game> {
         const game = await this.gameRepository.findOne({ id });
         if (game) {
-            // TODO get rid of this?
-            if (!game.players) {
-                game.players = [];
-            }
             return game;
         } else {
             throw new NotFoundException(`Game with id ${id} not found`);

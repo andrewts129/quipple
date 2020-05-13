@@ -1,5 +1,5 @@
 import { Player } from '../player/player.entity';
-import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryColumn, ManyToMany, JoinTable } from 'typeorm';
 
 export type GameStage = 'lobby' | 'starting' | 'question';
 
@@ -11,9 +11,8 @@ export class Game {
     @ManyToOne(() => Player, { eager: true })
     owner: Player;
 
-    // TODO super broken
-    @Column('simple-array')
-    @ManyToOne(() => Player, { eager: true })
+    @ManyToMany(() => Player, { eager: true, cascade: true })
+    @JoinTable()
     players: Player[];
 
     @Column()
