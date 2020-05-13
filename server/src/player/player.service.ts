@@ -1,5 +1,5 @@
 import { Player } from './player.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -9,5 +9,14 @@ export class PlayerService {
 
     async createPlayer(screenName: string): Promise<Player> {
         return this.playerRepository.save({ screenName });
+    }
+
+    async findPlayer(id: number): Promise<Player> {
+        const player = await this.playerRepository.findOne({ id });
+        if (player) {
+            return player;
+        } else {
+            throw new NotFoundException(`Player with id ${id} not found`);
+        }
     }
 }
