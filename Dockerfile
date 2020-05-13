@@ -13,8 +13,7 @@ COPY --from=build /app/server/dist /server/dist
 
 WORKDIR /server
 
-# Need build dependencies for sqlite
-RUN apk add --update python make && npm install --only=production
+RUN apk add --update make python g++ && npm install --unsafe-perm --only=production
 
 EXPOSE 4000
 CMD npm run start
