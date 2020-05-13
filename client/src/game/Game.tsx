@@ -5,7 +5,7 @@ import { Lobby } from './lobby/Lobby';
 import { RegisterDto } from '../dto/outgoing/RegisterDto';
 import { PlayerList } from './PlayerList';
 import { PlayerListDto } from '../dto/incoming/PlayerListDto';
-import { StartGameDto } from '../dto/incoming/StartGameDto';
+import { RegisterResponseDto } from '../dto/incoming/RegisterResponseDto';
 import { Starting } from './starting/Starting';
 import { Question } from './question/Question';
 import io from 'socket.io-client';
@@ -40,6 +40,7 @@ export class Game extends React.Component<GameProps, GameState> {
         };
 
         this.handleConnect = this.handleConnect.bind(this);
+        this.handleRegisterResponse = this.handleRegisterResponse.bind(this);
         this.handleReceivePlayerList = this.handleReceivePlayerList.bind(this);
         this.handleStartGame = this.handleStartGame.bind(this);
     }
@@ -71,17 +72,26 @@ export class Game extends React.Component<GameProps, GameState> {
     }
 
     private handleConnect(): void {
-        this.state.socket?.emit('register', {
-            gameId: this.props.gameId
-        } as RegisterDto);
+        this.state.socket?.emit(
+            'register',
+            {
+                gameId: this.props.gameId
+            } as RegisterDto,
+            this.handleRegisterResponse
+        );
+    }
+
+    private handleRegisterResponse(data: RegisterResponseDto): void {
+        console.log(data.questions);
+        this.setState({ questions: data.questions });
     }
 
     private handleReceivePlayerList(data: PlayerListDto): void {
         this.setState({ owner: data.owner, players: data.players });
     }
 
-    private handleStartGame(data: StartGameDto): void {
-        this.setState({ stage: 'starting', questions: data.questions });
+    private handleStartGame(): void {
+        this.setState({ stage: 'starting' });
 
         setTimeout(() => {
             this.setState({ stage: 'question' });

@@ -3,6 +3,7 @@ import { Game, GameStage } from './game.entity';
 import { PlayerService } from '../player/player.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { QuestionService } from '../question/question.service';
 
 const randomGameId = (): string => {
     const randomChar = (s: string): string => s[Math.floor(Math.random() * s.length)];
@@ -16,18 +17,18 @@ const randomGameId = (): string => {
 export class GameService {
     constructor(
         @InjectRepository(Game) private gameRepository: Repository<Game>,
-        private playerService: PlayerService
+        private playerService: PlayerService,
+        private questionService: QuestionService
     ) {}
 
     async createGame(creatorScreenName: string): Promise<Game> {
-        const game = {
+        return this.gameRepository.save({
             id: randomGameId(),
             owner: await this.playerService.createPlayer(creatorScreenName),
             players: [],
-            stage: 'lobby' as const
-        };
-
-        return this.gameRepository.save(game);
+            stage: 'lobby' as const,
+            questions: await this.questionService.randomQuestions(3)
+        });
     }
 
     async findGame(id: string): Promise<Game> {

@@ -17,4 +17,7 @@ export class Game {
 
     @Column()
     stage: GameStage;
+
+    @Column('simple-json')
+    questions: string[];
 }

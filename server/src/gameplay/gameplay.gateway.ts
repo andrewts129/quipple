@@ -9,33 +9,35 @@ import { RegisterDto } from './dto/incoming/RegisterDto';
 import { GameService } from '../game/game.service';
 import { PlayerListDto } from './dto/outgoing/PlayerListDto';
 import { AuthService } from '../auth/auth.service';
-import { QuestionService } from '../question/question.service';
 import { SubmitAnswerDto } from './dto/incoming/SubmitAnswerDto';
-import { StartGameDto } from './dto/outgoing/StartGameDto';
+import { RegisterResponseDto } from './dto/outgoing/RegisterResponseDto';
 import { UseGuards, NotFoundException } from '@nestjs/common';
 import { WsAuthGuard, AuthenticatedData } from '../auth/ws.auth.guard';
 import { Game } from '../game/game.entity';
 
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway {
-    constructor(
-        private gameService: GameService,
-        private questionService: QuestionService,
-        private authService: AuthService
-    ) {}
+    constructor(private gameService: GameService, private authService: AuthService) {}
 
     @WebSocketServer()
     private server: Server;
 
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('register')
-    async handleRegister(client: Socket, data: RegisterDto & AuthenticatedData): Promise<void> {
+    async handleRegister(
+        client: Socket,
+        data: RegisterDto & AuthenticatedData
+    ): Promise<RegisterResponseDto> {
         const game = await this.findGame(data.gameId);
         if (this.gameService.playerInGame(game.id, data.player.id)) {
             client.join(game.id);
             this.updateClientPlayerLists(game.id);
 
             client.on('disconnecting', () => this.handleClientDisconnect(client));
+
+            return {
+                questions: game.questions
+            };
         } else {
             throw new WsException('Unauthorized');
         }
@@ -47,8 +49,7 @@ export class GameplayGateway {
         const gameId = this.getRoom(client);
         const game = await this.findGame(gameId);
         if (data.player.id === game.owner.id) {
-            const questions = await this.questionService.randomQuestions(3);
-            this.server.to(game.id).emit('start', { questions } as StartGameDto);
+            this.server.to(game.id).emit('start');
 
             await this.gameService.changeStage(game.id, 'starting');
             setTimeout(() => {
