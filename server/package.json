@@ -18,6 +18,7 @@
         "@nestjs/platform-express": "^7.0.0",
         "@nestjs/platform-socket.io": "^7.0.9",
         "@nestjs/serve-static": "^2.1.0",
+        "@nestjs/typeorm": "^7.0.0",
         "@nestjs/websockets": "^7.0.9",
         "class-transformer": "^0.2.3",
         "class-validator": "^0.12.2",
@@ -25,7 +26,9 @@
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",
         "reflect-metadata": "^0.1.13",
-        "rxjs": "^6.5.4"
+        "rxjs": "^6.5.4",
+        "sqlite3": "^4.2.0",
+        "typeorm": "^0.2.24"
     },
     "devDependencies": {
         "@nestjs/cli": "^7.1.5",

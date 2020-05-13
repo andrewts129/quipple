@@ -5,12 +5,19 @@ import { PlayerModule } from './player/player.module';
 import { GameplayModule } from './gameplay/gameplay.module';
 import { InitModule } from './init/init.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 
 @Module({
     imports: [
         ServeStaticModule.forRoot({
             rootPath: join(__dirname, '..', '..', 'client', 'build')
+        }),
+        TypeOrmModule.forRoot({
+            type: 'sqlite',
+            database: ':memory:',
+            synchronize: true,
+            autoLoadEntities: true
         }),
         AuthModule,
         GameModule,
