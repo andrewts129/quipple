@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes } from '@nestjs/common';
 import { JoinGameDto } from './dto/incoming/JoinGameDto';
 import { JoinGameValidationPipe } from './pipes/JoinGameValidationPipe';
 import { GameService } from '../game/game.service';
@@ -34,19 +34,18 @@ export class InitController {
     @Post('join')
     @UsePipes(new JoinGameValidationPipe())
     async join(@Body() body: JoinGameDto): Promise<CreateJoinResponseDto> {
-        const game = await this.gameService.findGame(body.gameIdToJoin);
-        if (game) {
-            const player = await this.playerService.createPlayer(body.screenName);
-            await this.gameService.addPlayer(game, player);
-            this.gameplayGateway.updateClientPlayerLists(game);
+        const [game, player] = await Promise.all([
+            this.gameService.findGame(body.gameIdToJoin),
+            this.playerService.createPlayer(body.screenName)
+        ]);
 
-            return {
-                gameId: game.id,
-                player,
-                jwt: await this.authService.createJwt(player)
-            };
-        } else {
-            throw new NotFoundException(`Game with ID ${body.gameIdToJoin} not found`);
-        }
+        await this.gameService.addPlayer(game.id, player.id);
+        this.gameplayGateway.updateClientPlayerLists(game.id);
+
+        return {
+            gameId: game.id,
+            player,
+            jwt: await this.authService.createJwt(player)
+        };
     }
 }

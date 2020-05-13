@@ -12,7 +12,9 @@ COPY --from=build /app/server/package.json /app/server/package-lock.json /server
 COPY --from=build /app/server/dist /server/dist
 
 WORKDIR /server
-RUN npm install --only=production
+
+# Need build dependencies for sqlite
+RUN apk add --update python make && npm install --only=production
 
 EXPOSE 4000
 CMD npm run start

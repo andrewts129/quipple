@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthService } from './auth.service';
-import { Player } from '../player/player.model';
+import { Player } from '../player/player.entity';
 
 export interface AuthenticatedData {
     player: Player;

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { Game } from './game.model';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Game, GameStage } from './game.entity';
 import { PlayerService } from '../player/player.service';
-import { Player } from '../player/player.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 const randomGameId = (): string => {
     const randomChar = (s: string): string => s[Math.floor(Math.random() * s.length)];
@@ -13,9 +14,10 @@ const randomGameId = (): string => {
 
 @Injectable()
 export class GameService {
-    constructor(private playerService: PlayerService) {}
-
-    private games: Map<string, Game> = new Map();
+    constructor(
+        @InjectRepository(Game) private gameRepository: Repository<Game>,
+        private playerService: PlayerService
+    ) {}
 
     async createGame(creatorScreenName: string): Promise<Game> {
         const game = {
@@ -25,38 +27,56 @@ export class GameService {
             stage: 'lobby' as const
         };
 
-        this.games.set(game.id, game);
-        return game;
+        return this.gameRepository.save(game);
     }
 
-    async findGame(id: string): Promise<Game | null> {
-        return this.games.get(id);
-    }
-
-    async addPlayer(game: Game, player: Player): Promise<void> {
-        game.players.push(player);
-    }
-
-    async removePlayer(game: Game, playerToRemove: Player): Promise<void> {
-        if (playerToRemove.id === game.owner?.id) {
-            game.owner = game.players.shift();
+    async findGame(id: string): Promise<Game> {
+        const game = await this.gameRepository.findOne({ id });
+        if (game) {
+            return game;
         } else {
-            game.players = game.players.filter((player) => player.id !== playerToRemove.id);
-        }
-
-        // If nobody is left in the game
-        if (await this.gameEmpty(game)) {
-            this.games.delete(game.id);
+            throw new NotFoundException(`Game with id ${id} not found`);
         }
     }
 
-    async playerInGame(game: Game, playerToFind: Player): Promise<boolean> {
-        const allPlayers = [game.owner, ...game.players];
-        const playerIds = allPlayers.map((player) => player.id);
-        return playerIds.includes(playerToFind.id);
+    async addPlayer(gameId: string, playerId: number): Promise<Game> {
+        const [game, player] = await Promise.all([
+            this.findGame(gameId),
+            this.playerService.findPlayer(playerId)
+        ]);
+
+        const newPlayerList = [...game.players, player];
+        return this.gameRepository.save({ id: game.id, players: newPlayerList });
     }
 
-    async gameEmpty(game: Game): Promise<boolean> {
-        return !game.owner;
+    async removePlayer(gameId: string, playerId: number): Promise<Game | null> {
+        const game = await this.findGame(gameId);
+
+        if (playerId === game.owner.id) {
+            if (game.players.length > 0) {
+                const [newOwner, ...newPlayerList] = game.players;
+                return this.gameRepository.save({
+                    id: game.id,
+                    owner: newOwner,
+                    players: newPlayerList
+                });
+            } else {
+                return this.gameRepository.remove(game);
+            }
+        } else {
+            const newPlayerList = game.players.filter((p) => p.id !== playerId);
+            return this.gameRepository.save({ id: gameId, players: newPlayerList });
+        }
+    }
+
+    async playerInGame(gameId: string, playerId: number): Promise<boolean> {
+        const game = await this.findGame(gameId);
+        const playerIds = [game.owner, ...game.players].map((p) => p.id);
+        return playerIds.includes(playerId);
+    }
+
+    async changeStage(gameId: string, stage: GameStage): Promise<Game> {
+        const game = await this.findGame(gameId);
+        return this.gameRepository.save({ id: game.id, stage });
     }
 }
