@@ -15,6 +15,7 @@ import { UseGuards, NotFoundException } from '@nestjs/common';
 import { WsAuthGuard, AuthenticatedData } from '../auth/ws.auth.guard';
 import { Game } from '../game/game.entity';
 import { NewAnswerDto } from './dto/outgoing/NewAnswerDto';
+import { VoteDto } from './dto/incoming/VoteDto';
 
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway {
@@ -77,6 +78,16 @@ export class GameplayGateway {
         } else {
             throw new WsException('Not accepting answers');
         }
+    }
+
+    @UseGuards(WsAuthGuard)
+    @SubscribeMessage('vote')
+    async handleVote(client: Socket, data: VoteDto & AuthenticatedData): Promise<void> {
+        // TODO actually do something
+        const gameId = this.getRoom(client);
+        console.log(
+            `Vote for Player ${data.answerPlayerId} answer from ${data.player.screenName} in ${gameId}`
+        );
     }
 
     async updateClientPlayerLists(gameId: string): Promise<void> {

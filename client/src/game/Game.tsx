@@ -156,7 +156,13 @@ export class Game extends React.Component<GameProps, GameState> {
                 case 'question':
                     return <Question questions={this.state.questions} socket={this.state.socket} />;
                 case 'voting':
-                    return <Voting answers={this.state.answers} socket={this.state.socket} />;
+                    return (
+                        <Voting
+                            answers={this.state.answers}
+                            player={this.props.player}
+                            socket={this.state.socket}
+                        />
+                    );
                 default:
                     return <p>ERROR</p>;
             }
