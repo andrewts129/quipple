@@ -9,8 +9,11 @@ import { RegisterResponseDto } from '../dto/incoming/RegisterResponseDto';
 import { Starting } from './starting/Starting';
 import { Question } from './question/Question';
 import io from 'socket.io-client';
+import { Answer } from '../model/answer';
+import { NewAnswerDto } from '../dto/incoming/NewAnswerDto';
+import { Voting } from './voting/Voting';
 
-type GameStages = 'lobby' | 'starting' | 'question';
+type GameStages = 'lobby' | 'starting' | 'question' | 'voting';
 
 interface GameProps extends RouteComponentProps<{ gameId: string }> {
     onError: (error: Error) => void;
@@ -25,6 +28,7 @@ interface GameState {
     players: (Player | undefined)[];
     stage: GameStages;
     questions: string[];
+    answers: Answer[];
 }
 
 export class Game extends React.Component<GameProps, GameState> {
@@ -36,13 +40,15 @@ export class Game extends React.Component<GameProps, GameState> {
             owner: undefined,
             players: [this.props.player],
             stage: 'lobby',
-            questions: []
+            questions: [],
+            answers: []
         };
 
         this.handleConnect = this.handleConnect.bind(this);
         this.handleRegisterResponse = this.handleRegisterResponse.bind(this);
         this.handleReceivePlayerList = this.handleReceivePlayerList.bind(this);
         this.handleStartGame = this.handleStartGame.bind(this);
+        this.handleNewAnswer = this.handleNewAnswer.bind(this);
     }
 
     componentDidMount(): void {
@@ -55,6 +61,7 @@ export class Game extends React.Component<GameProps, GameState> {
             .on('connect', this.handleConnect)
             .on('newPlayerList', this.handleReceivePlayerList)
             .on('start', this.handleStartGame)
+            .on('newAnswer', this.handleNewAnswer)
             .on('error', () => {
                 this.props.onError(new Error('Error from server'));
             })
@@ -98,6 +105,20 @@ export class Game extends React.Component<GameProps, GameState> {
         }, 3000);
     }
 
+    private handleNewAnswer(data: NewAnswerDto): void {
+        this.setState(
+            (oldState) => ({
+                answers: [...oldState.answers, data]
+            }),
+            () => {
+                // Checks if all answers are in. +1 to account for owner
+                if (this.state.answers.length >= this.state.players.length + 1) {
+                    this.setState({ stage: 'voting' });
+                }
+            }
+        );
+    }
+
     render(): JSX.Element {
         if (!this.state.socket) {
             return <h3 className="subtitle is-3">Loading...</h3>;
@@ -134,6 +155,8 @@ export class Game extends React.Component<GameProps, GameState> {
                     return <Starting />;
                 case 'question':
                     return <Question questions={this.state.questions} socket={this.state.socket} />;
+                case 'voting':
+                    return <Voting answers={this.state.answers} socket={this.state.socket} />;
                 default:
                     return <p>ERROR</p>;
             }

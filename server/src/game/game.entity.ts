@@ -1,7 +1,7 @@
 import { Player } from '../player/player.entity';
 import { Entity, Column, ManyToOne, PrimaryColumn, ManyToMany, JoinTable } from 'typeorm';
 
-export type GameStage = 'lobby' | 'starting' | 'question';
+export type GameStage = 'lobby' | 'starting' | 'question' | 'voting';
 
 @Entity()
 export class Game {

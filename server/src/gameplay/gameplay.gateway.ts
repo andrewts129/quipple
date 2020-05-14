@@ -14,6 +14,7 @@ import { RegisterResponseDto } from './dto/outgoing/RegisterResponseDto';
 import { UseGuards, NotFoundException } from '@nestjs/common';
 import { WsAuthGuard, AuthenticatedData } from '../auth/ws.auth.guard';
 import { Game } from '../game/game.entity';
+import { NewAnswerDto } from './dto/outgoing/NewAnswerDto';
 
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway {
@@ -69,10 +70,12 @@ export class GameplayGateway {
         const gameId = this.getRoom(client);
         const game = await this.findGame(gameId);
         if (game.stage === 'question') {
-            // TODO actually do something with the answer
-            console.log(`Answer from ${data.player.screenName}: ${data.answer}`);
+            this.server.to(game.id).emit('newAnswer', {
+                answer: data.answer,
+                player: data.player
+            } as NewAnswerDto);
         } else {
-            throw new WsException('Not accepting questions');
+            throw new WsException('Not accepting answers');
         }
     }
 
