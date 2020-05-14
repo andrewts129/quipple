@@ -21,11 +21,11 @@ export class Voting extends React.Component<VotingProps, VotingState> {
             voted: false
         };
 
-        this.renderAnswerListElement = this.renderAnswerListElement.bind(this);
+        this.renderAnswerCard = this.renderAnswerCard.bind(this);
         this.onVoteButtonClick = this.onVoteButtonClick.bind(this);
     }
 
-    private renderAnswerListElement(answer: Answer): JSX.Element {
+    private renderAnswerCard(answer: Answer): JSX.Element {
         // Don't show button for own answer and don't show any buttons after voting
         const maybeButton =
             this.state.voted || answer.player.id === this.props.player.id ? (
@@ -40,12 +40,13 @@ export class Voting extends React.Component<VotingProps, VotingState> {
                 </button>
             );
 
-        // TODO this looks terrible
         return (
-            <li key={answer.player.id}>
-                {answer.answer}
-                {maybeButton}
-            </li>
+            <div className="tile is-4 is-parent">
+                <div className="tile is-child box">
+                    <p className="subtitle">{answer.answer}</p>
+                    {maybeButton}
+                </div>
+            </div>
         );
     }
 
@@ -58,16 +59,18 @@ export class Voting extends React.Component<VotingProps, VotingState> {
     }
 
     render(): JSX.Element {
-        const listElements = this.props.answers.map((answer) =>
-            this.renderAnswerListElement(answer)
+        const answerCards = this.props.answers.map((answer) => this.renderAnswerCard(answer));
+        const postVoteMessage = this.state.voted ? (
+            <p>Waiting for other players to vote...</p>
+        ) : (
+            <></>
         );
 
         return (
             <>
                 <h3 className="subtitle is-3">Answers</h3>
-                <div className="content">
-                    <ul>{listElements}</ul>
-                </div>
+                <div className="tile is-ancestor">{answerCards}</div>
+                {postVoteMessage}
             </>
         );
     }
