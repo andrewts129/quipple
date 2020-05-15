@@ -7,6 +7,7 @@ import { InitModule } from './init/init.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { VoteModule } from './vote/vote.module';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { join } from 'path';
         GameModule,
         PlayerModule,
         GameplayModule,
-        InitModule
+        InitModule,
+        VoteModule
     ]
 })
 export class RootModule {}

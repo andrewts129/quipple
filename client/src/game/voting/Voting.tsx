@@ -50,9 +50,9 @@ export class Voting extends React.Component<VotingProps, VotingState> {
         );
     }
 
-    private onVoteButtonClick(answerPlayerId: number): void {
+    private onVoteButtonClick(forPlayerId: number): void {
         this.props.socket.emit('vote', {
-            answerPlayerId
+            forPlayerId
         } as VoteDto);
 
         this.setState({ voted: true });

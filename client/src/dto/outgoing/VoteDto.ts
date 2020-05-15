@@ -1,3 +1,3 @@
 export interface VoteDto {
-    answerPlayerId: number;
+    forPlayerId: number;
 }

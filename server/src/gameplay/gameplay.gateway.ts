@@ -16,10 +16,17 @@ import { WsAuthGuard, AuthenticatedData } from '../auth/ws.auth.guard';
 import { Game } from '../game/game.entity';
 import { NewAnswerDto } from './dto/outgoing/NewAnswerDto';
 import { VoteDto } from './dto/incoming/VoteDto';
+import { VoteService } from '../vote/vote.service';
+import { Vote } from '../vote/vote.entity';
+import { VotingResultsDto } from './dto/outgoing/VotingResultsDto';
 
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway {
-    constructor(private gameService: GameService, private authService: AuthService) {}
+    constructor(
+        private gameService: GameService,
+        private authService: AuthService,
+        private voteService: VoteService
+    ) {}
 
     @WebSocketServer()
     private server: Server;
@@ -83,11 +90,22 @@ export class GameplayGateway {
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('vote')
     async handleVote(client: Socket, data: VoteDto & AuthenticatedData): Promise<void> {
-        // TODO actually do something
         const gameId = this.getRoom(client);
-        console.log(
-            `Vote for Player ${data.answerPlayerId} answer from ${data.player.screenName} in ${gameId}`
-        );
+        const game = await this.gameService.findGame(gameId);
+
+        if (game.stage === 'question') {
+            this.gameService.changeStage(game.id, 'voting');
+        } else if (game.stage !== 'voting') {
+            throw new WsException('Wrong stage');
+        }
+
+        // Stage is now 'voting'
+        await this.voteService.saveVote(game.id, data.forPlayerId);
+
+        const votes = await this.voteService.getVotes(game.id);
+        if (votes.length >= game.players.length + 1) {
+            this.handleAllVotesIn(game.id, votes);
+        }
     }
 
     async updateClientPlayerLists(gameId: string): Promise<void> {
@@ -112,6 +130,14 @@ export class GameplayGateway {
                 throw new WsException('Unexpected server error');
             }
         }
+    }
+
+    private async handleAllVotesIn(gameId: string, votes: Vote[]): Promise<void> {
+        this.server.to(gameId).emit('votingResults', {
+            votes: votes.map((v) => v.forPlayerId)
+        } as VotingResultsDto);
+
+        this.voteService.clearVotes(gameId);
     }
 
     private async handleClientDisconnect(client: Socket): Promise<void> {

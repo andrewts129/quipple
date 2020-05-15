@@ -1,3 +1,3 @@
 export class VoteDto {
-    answerPlayerId: number;
+    forPlayerId: number;
 }
