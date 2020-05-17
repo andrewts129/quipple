@@ -4,6 +4,7 @@ import { Player } from '../../model/player';
 import { VoteDto } from '../../dto/outgoing/VoteDto';
 
 interface VotingProps {
+    question: string;
     answers: Answer[];
     player: Player;
     socket: SocketIOClient.Socket;
@@ -68,6 +69,8 @@ export class Voting extends React.Component<VotingProps, VotingState> {
 
         return (
             <>
+                <h3 className="subtitle is-3">Question</h3>
+                <p>{this.props.question}</p>
                 <h3 className="subtitle is-3">Answers</h3>
                 <div className="tile is-ancestor">{answerCards}</div>
                 {postVoteMessage}

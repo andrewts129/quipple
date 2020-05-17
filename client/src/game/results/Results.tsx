@@ -36,6 +36,8 @@ export class Results extends React.Component<ResultsProps, {}> {
 
         return (
             <>
+                <h3 className="subtitle is-3">Question</h3>
+                <p>{this.props.question}</p>
                 <h3 className="subtitle is-3">Answers</h3>
                 <div className="tile is-ancestor">{tiles}</div>
             </>

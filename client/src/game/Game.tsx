@@ -168,6 +168,7 @@ export class Game extends React.Component<GameProps, GameState> {
                 case 'voting':
                     return (
                         <Voting
+                            question={this.state.questions[0]}
                             answers={this.state.answers}
                             player={this.props.player}
                             socket={this.state.socket}
