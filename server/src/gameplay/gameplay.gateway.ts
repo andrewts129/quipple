@@ -59,11 +59,6 @@ export class GameplayGateway {
         const game = await this.findGame(gameId);
         if (data.player.id === game.owner.id) {
             this.server.to(game.id).emit('start');
-
-            await this.gameService.changeStage(game.id, 'starting');
-            setTimeout(() => {
-                this.gameService.changeStage(game.id, 'question');
-            }, 3000);
         } else {
             throw new WsException('Unauthorized');
         }
@@ -76,15 +71,10 @@ export class GameplayGateway {
         data: SubmitAnswerDto & AuthenticatedData
     ): Promise<void> {
         const gameId = this.getRoom(client);
-        const game = await this.findGame(gameId);
-        if (game.stage === 'question') {
-            this.server.to(game.id).emit('newAnswer', {
-                answer: data.answer,
-                player: data.player
-            } as NewAnswerDto);
-        } else {
-            throw new WsException('Not accepting answers');
-        }
+        this.server.to(gameId).emit('newAnswer', {
+            answer: data.answer,
+            player: data.player
+        } as NewAnswerDto);
     }
 
     @UseGuards(WsAuthGuard)
@@ -93,13 +83,6 @@ export class GameplayGateway {
         const gameId = this.getRoom(client);
         const game = await this.gameService.findGame(gameId);
 
-        if (game.stage === 'question') {
-            this.gameService.changeStage(game.id, 'voting');
-        } else if (game.stage !== 'voting') {
-            throw new WsException('Wrong stage');
-        }
-
-        // Stage is now 'voting'
         await this.voteService.saveVote(game.id, data.forPlayerId);
 
         const votes = await this.voteService.getVotes(game.id);

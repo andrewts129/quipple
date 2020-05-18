@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Game, GameStage } from './game.entity';
+import { Game } from './game.entity';
 import { PlayerService } from '../player/player.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,7 +26,6 @@ export class GameService {
             id: randomGameId(),
             owner: await this.playerService.createPlayer(creatorScreenName),
             players: [],
-            stage: 'lobby' as const,
             questions: await this.questionService.randomQuestions(3)
         });
     }
@@ -74,10 +73,5 @@ export class GameService {
         const game = await this.findGame(gameId);
         const playerIds = [game.owner, ...game.players].map((p) => p.id);
         return playerIds.includes(playerId);
-    }
-
-    async changeStage(gameId: string, stage: GameStage): Promise<Game> {
-        const game = await this.findGame(gameId);
-        return this.gameRepository.save({ id: game.id, stage });
     }
 }
