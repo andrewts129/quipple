@@ -19,13 +19,15 @@ import { VoteDto } from './dto/incoming/VoteDto';
 import { VoteService } from '../vote/vote.service';
 import { Vote } from '../vote/vote.entity';
 import { VotingResultsDto } from './dto/outgoing/VotingResultsDto';
+import { RoundService } from '../round/round.service';
 
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway {
     constructor(
         private gameService: GameService,
         private authService: AuthService,
-        private voteService: VoteService
+        private voteService: VoteService,
+        private roundService: RoundService
     ) {}
 
     @WebSocketServer()
@@ -45,7 +47,7 @@ export class GameplayGateway {
             client.on('disconnecting', () => this.handleClientDisconnect(client));
 
             return {
-                questions: game.questions
+                questions: game.rounds.map((round) => round.question)
             };
         } else {
             throw new WsException('Unauthorized');
@@ -75,19 +77,20 @@ export class GameplayGateway {
             answer: data.answer,
             player: data.player
         } as NewAnswerDto);
+
+        // TODO save answer
     }
 
     @UseGuards(WsAuthGuard)
     @SubscribeMessage('vote')
     async handleVote(client: Socket, data: VoteDto & AuthenticatedData): Promise<void> {
         const gameId = this.getRoom(client);
-        const game = await this.gameService.findGame(gameId);
+        const game = await this.findGame(gameId);
 
-        await this.voteService.saveVote(game.id, data.forPlayerId);
+        const votes = await this.voteService.placeVote(gameId, data.forPlayerId);
 
-        const votes = await this.voteService.getVotes(game.id);
         if (votes.length >= game.players.length + 1) {
-            this.handleAllVotesIn(game.id, votes);
+            this.handleAllVotesIn(gameId, votes);
         }
     }
 
@@ -120,7 +123,7 @@ export class GameplayGateway {
             votes: votes.map((v) => v.forPlayerId)
         } as VotingResultsDto);
 
-        this.voteService.clearVotes(gameId);
+        this.roundService.advanceRound(gameId);
     }
 
     private async handleClientDisconnect(client: Socket): Promise<void> {
