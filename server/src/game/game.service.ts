@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Game, GameStage } from './game.entity';
+import { Game } from './game.entity';
 import { PlayerService } from '../player/player.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuestionService } from '../question/question.service';
+import { Round } from '../round/round.entity';
 
 const randomGameId = (): string => {
     const randomChar = (s: string): string => s[Math.floor(Math.random() * s.length)];
@@ -22,13 +23,24 @@ export class GameService {
     ) {}
 
     async createGame(creatorScreenName: string): Promise<Game> {
-        return this.gameRepository.save({
-            id: randomGameId(),
-            owner: await this.playerService.createPlayer(creatorScreenName),
-            players: [],
-            stage: 'lobby' as const,
-            questions: await this.questionService.randomQuestions(3)
+        const game = new Game();
+        game.id = randomGameId();
+        game.owner = await this.playerService.createPlayer(creatorScreenName);
+        game.players = [];
+
+        const questions = await this.questionService.randomQuestions(3);
+        game.rounds = questions.map((question, index) => {
+            const round = new Round();
+            round.question = question;
+            round.active = index === 0;
+            round.answers = [];
+            round.votes = [];
+            round.readyToEnd = [];
+
+            return round;
         });
+
+        return this.gameRepository.save(game);
     }
 
     async findGame(id: string): Promise<Game> {
@@ -74,10 +86,5 @@ export class GameService {
         const game = await this.findGame(gameId);
         const playerIds = [game.owner, ...game.players].map((p) => p.id);
         return playerIds.includes(playerId);
-    }
-
-    async changeStage(gameId: string, stage: GameStage): Promise<Game> {
-        const game = await this.findGame(gameId);
-        return this.gameRepository.save({ id: game.id, stage });
     }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { SubmitAnswerDto } from '../../dto/outgoing/SubmitAnswerDto';
 
 interface QuestionProps {
-    questions: string[];
+    question: string;
     socket: SocketIOClient.Socket;
 }
 
@@ -55,7 +55,7 @@ export class Question extends React.Component<QuestionProps, QuestionState> {
         return (
             <>
                 <h3 className="subtitle is-3">Question</h3>
-                <p>{this.props.questions[0]}</p>
+                <p>{this.props.question}</p>
                 <h3 className="subtitle is-3">Your Answer</h3>
                 {answerSection}
             </>

@@ -1,4 +1,5 @@
 import React from 'react';
+import io from 'socket.io-client';
 import { RouteComponentProps } from '@reach/router';
 import { Player } from '../model/player';
 import { Lobby } from './lobby/Lobby';
@@ -8,14 +9,14 @@ import { PlayerListDto } from '../dto/incoming/PlayerListDto';
 import { RegisterResponseDto } from '../dto/incoming/RegisterResponseDto';
 import { Starting } from './starting/Starting';
 import { Question } from './question/Question';
-import io from 'socket.io-client';
 import { Answer } from '../model/answer';
 import { NewAnswerDto } from '../dto/incoming/NewAnswerDto';
 import { Voting } from './voting/Voting';
 import { VotingResultsDto } from '../dto/incoming/VotingResultsDto';
 import { Results } from './results/Results';
+import { End } from './end/End';
 
-type GameStages = 'lobby' | 'starting' | 'question' | 'voting' | 'results';
+type GameStages = 'lobby' | 'starting' | 'question' | 'voting' | 'results' | 'end';
 
 interface GameProps extends RouteComponentProps<{ gameId: string }> {
     onError: (error: Error) => void;
@@ -29,7 +30,8 @@ interface GameState {
     owner: Player | undefined;
     players: (Player | undefined)[];
     stage: GameStages;
-    questions: string[];
+    currentQuestion: string;
+    remainingQuestions: string[];
     answers: Answer[];
     votes: number[];
 }
@@ -43,7 +45,8 @@ export class Game extends React.Component<GameProps, GameState> {
             owner: undefined,
             players: [this.props.player],
             stage: 'lobby',
-            questions: [],
+            currentQuestion: '',
+            remainingQuestions: [],
             answers: [],
             votes: []
         };
@@ -95,8 +98,10 @@ export class Game extends React.Component<GameProps, GameState> {
     }
 
     private handleRegisterResponse(data: RegisterResponseDto): void {
-        console.log(data.questions);
-        this.setState({ questions: data.questions });
+        this.setState({
+            currentQuestion: data.questions[0],
+            remainingQuestions: data.questions.slice(1)
+        });
     }
 
     private handleReceivePlayerList(data: PlayerListDto): void {
@@ -127,6 +132,28 @@ export class Game extends React.Component<GameProps, GameState> {
 
     private handleVotingResults(data: VotingResultsDto): void {
         this.setState({ stage: 'results', votes: data.votes });
+
+        // TODO make this dependent on user input
+        setTimeout(() => {
+            this.setState((oldState) => {
+                if (oldState.remainingQuestions.length > 0) {
+                    return {
+                        currentQuestion: oldState.remainingQuestions[0],
+                        remainingQuestions: oldState.remainingQuestions.slice(1),
+                        answers: [],
+                        stage: 'question'
+                    };
+                } else {
+                    // Setting the question properties is redundant but it's necessary for the compiler
+                    return {
+                        currentQuestion: '',
+                        remainingQuestions: [],
+                        answers: [],
+                        stage: 'end'
+                    };
+                }
+            });
+        }, 6000);
     }
 
     render(): JSX.Element {
@@ -148,7 +175,7 @@ export class Game extends React.Component<GameProps, GameState> {
         }
     }
 
-    private getStageBody(stage: GameStages) {
+    private getStageBody(stage: GameStages): JSX.Element {
         // These all exist, just making the compiler happy
         if (this.props.player && this.props.gameId && this.state.socket) {
             switch (stage) {
@@ -164,11 +191,16 @@ export class Game extends React.Component<GameProps, GameState> {
                 case 'starting':
                     return <Starting />;
                 case 'question':
-                    return <Question questions={this.state.questions} socket={this.state.socket} />;
+                    return (
+                        <Question
+                            question={this.state.currentQuestion}
+                            socket={this.state.socket}
+                        />
+                    );
                 case 'voting':
                     return (
                         <Voting
-                            question={this.state.questions[0]}
+                            question={this.state.currentQuestion}
                             answers={this.state.answers}
                             player={this.props.player}
                             socket={this.state.socket}
@@ -177,11 +209,13 @@ export class Game extends React.Component<GameProps, GameState> {
                 case 'results':
                     return (
                         <Results
-                            question={this.state.questions[0]}
+                            question={this.state.currentQuestion}
                             answers={this.state.answers}
                             votes={this.state.votes}
                         />
                     );
+                case 'end':
+                    return <End />;
                 default:
                     return <p>ERROR</p>;
             }
