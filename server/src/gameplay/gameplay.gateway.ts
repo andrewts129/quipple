@@ -19,13 +19,15 @@ import { VoteDto } from './dto/incoming/VoteDto';
 import { VoteService } from '../vote/vote.service';
 import { Vote } from '../vote/vote.entity';
 import { VotingResultsDto } from './dto/outgoing/VotingResultsDto';
+import { RoundService } from '../round/round.service';
 
 @WebSocketGateway({ namespace: 'gameplay' })
 export class GameplayGateway {
     constructor(
         private gameService: GameService,
         private authService: AuthService,
-        private voteService: VoteService
+        private voteService: VoteService,
+        private roundService: RoundService
     ) {}
 
     @WebSocketServer()
@@ -121,7 +123,7 @@ export class GameplayGateway {
             votes: votes.map((v) => v.forPlayerId)
         } as VotingResultsDto);
 
-        // TODO change active round
+        this.roundService.advanceRound(gameId);
     }
 
     private async handleClientDisconnect(client: Socket): Promise<void> {

@@ -134,12 +134,13 @@ export class Game extends React.Component<GameProps, GameState> {
         this.setState({ stage: 'results', votes: data.votes });
 
         // TODO make this dependent on user input
-        setInterval(() => {
+        setTimeout(() => {
             this.setState((oldState) => {
                 if (oldState.remainingQuestions.length > 0) {
                     return {
                         currentQuestion: oldState.remainingQuestions[0],
                         remainingQuestions: oldState.remainingQuestions.slice(1),
+                        answers: [],
                         stage: 'question'
                     };
                 } else {
@@ -147,6 +148,7 @@ export class Game extends React.Component<GameProps, GameState> {
                     return {
                         currentQuestion: '',
                         remainingQuestions: [],
+                        answers: [],
                         stage: 'end'
                     };
                 }
